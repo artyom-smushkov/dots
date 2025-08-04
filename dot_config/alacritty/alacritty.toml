@@ -1,0 +1,22 @@
+[general]
+import = [
+  "/home/templarrr/.config/alacritty/catppuccin-mocha.toml"
+]
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+dynamic_padding = true
+decorations = "None"
+opacity = 0.9
+
+[font]
+normal = { family = "VictorMono Nerd Font", style = "Regular"}
+size = 11.5
+
+[cursor]
+style = { shape = "Beam", blinking = "Off" }
+
+[terminal]
+shell = "/usr/bin/fish"

@@ -1,0 +1,32 @@
+# ~/.config/borgmatic/config.yaml
+source_directories:
+  - ~/Documents
+  - /mnt/media/Pictures/
+  - /mnt/media/Videos/
+  - ~/.ssh
+  - /mnt/media/Music/
+
+# one_file_system: true
+
+repositories:
+  - path: ssh://q8qm71x0@q8qm71x0.repo.borgbase.com/./repo
+
+exclude_caches: true
+
+compression: auto,zstd
+encryption_passphrase: 40DE0E13E4575983AB5CDBAF2F65D7B7BB4C7C5A
+archive_name_format: "{hostname}-{now}"
+
+# Number of times to retry a failing backup
+# Needs recent Borgmatic version
+retries: 5
+retry_wait: 5
+
+keep_daily: 3
+keep_weekly: 4
+keep_monthly: 12
+
+# Don't read whole repo each time
+skip_actions:
+    - check
+check_last: 3

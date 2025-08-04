@@ -1,0 +1,161 @@
+* {
+    font-size: 15px;
+    min-height: 0;
+    font-family: IosevkaTerm Nerd Font, sans-serif;
+  /* font-weight: bold; */
+}
+window#waybar {
+      background-color: rgba(30,30,46,0);
+      border-bottom: 1px solid rgba(30,30,46,0);
+      /* border-radius: 10px; */
+      color: #a6e3a1;
+}
+window#waybar.empty #window {
+    background-color: transparent;
+    border: none;
+}
+#workspaces {
+      background-color: rgba(30, 30, 46, 0.9);
+      margin: 16px 16px 0px 0px;
+      padding: 0px 1px;
+      /* border-radius: 10px; */
+      border: 0px;
+      border: 2px solid #45475a;
+      font-style: normal;
+      color: #45475a;
+}
+#workspaces button {
+      min-width: 7px;
+      padding: 0px 5px;
+      margin: 4px 3px;
+      /* border-radius: 6px; */
+      border-radius: 0px;
+      border: 0px;
+      color: rgba(88, 91, 112, 0.5);
+      background-color: rgba(88, 91, 112, 0.5);
+      transition: all 0.1s ease-in-out;
+}
+#workspaces button.active {
+      color: #313244;
+      background: #74c7ec;
+      /* border-radius: 6px; */
+      min-width: 25px;
+      transition: all 0.1s ease-in-out;
+}
+#workspaces button:hover {
+      color: #313244;
+      background: #74c7ec;
+      /* border-radius: 6px; */
+}
+tooltip {
+    background-color: rgba(30, 30, 46, 0.9);
+    border: 1px solid #74c7ec;
+    /* border-radius: 10px; */
+}
+tooltip label {
+    color: #cdd6f4;
+}
+#mpris {
+    color: #f9e2af;
+    background-color: rgba(30, 30, 46, 0.9);
+    /* border-radius: 10px 10px 10px 10px; */
+    margin: 16px 16px 0px 16px;
+    padding: 2px 10px;
+    border: 2px solid #45475a;
+}
+#memory {
+      color: #a6e3a1;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#clock {
+      color: #f9e2af;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#clock.date {
+      color: #94e2d5;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#language {
+      color: #a6e3a1;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#cpu {
+      color: #cdd6f4;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#disk {
+      color: #94e2d5;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#battery {
+      color: #eba0ac;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#network {
+      color: #cda6f7;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#tray {
+      color: #cdd6f4;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 0px 0px 10px; */
+      margin: 5px 0px 5px 5px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#pulseaudio {
+      color: #74c7ec;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#custom-notification {
+      color: #b4befe;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}
+#idle_inhibitor {
+      color: #cda6f7;
+      background-color: rgba(30, 30, 46, 0.9);
+      /* border-radius: 10px 10px 10px 10px; */
+      margin: 16px 16px 0px 0px;
+      padding: 2px 10px;
+      border: 2px solid #45475a;
+}

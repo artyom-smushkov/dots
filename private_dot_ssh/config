@@ -1,0 +1,156 @@
+Host piiq-jumpserver
+  HostName 148.251.54.145
+  User artyom.smu
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-dev1
+  HostName 23.88.71.37
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-dev2
+  HostName 95.217.59.120
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-dev3
+  HostName 49.12.86.111
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-dev4
+  HostName 195.201.199.60
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-dev5
+  HostName 213.239.192.235
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-stage
+  HostName 167.235.184.116
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-local
+  HostName 172.18.0.2
+  User piiq
+  IdentityFile /home/templarrr/.ssh/id_rsa
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-worker1
+  HostName 116.202.210.190
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-worker2
+  HostName 136.243.35.57
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-worker3
+  HostName 46.4.15.227
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-worker4
+  HostName 136.243.44.244
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-webserver
+  HostName 178.63.94.76
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-cronserver
+  HostName 5.9.118.119
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-mongosync
+  HostName 46.4.71.12
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes
+
+Host piiq-stage-mongo
+  HostName 162.55.91.119
+  User root
+  IdentityFile /home/templarrr/.ssh/id_rsa_jump
+  ProxyJump piiq-jumpserver
+  Compression yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%r@%h:%p
+  ControlPersist yes

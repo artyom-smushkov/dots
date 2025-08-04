@@ -1,0 +1,165 @@
+[
+  {
+    "mpris": {
+      "format": "{player_icon} {dynamic}",
+      "dynamic-len": 50,
+      "dynamic-order": ["artist", "title"],
+      "player-icons": {
+        "spotify": "󰓇 ",
+	"firefox": "󰈹 "
+      }
+    },
+    "battery": {
+      "format": "{icon} {capacity}%",
+      "format-charging": "󰂄 {capacity}%",
+      "format-icons": [
+        "󰁺",
+        "󰁻",
+        "󰁼",
+        "󰁽",
+        "󰁾",
+        "󰁿",
+        "󰂀",
+        "󰂁",
+        "󰂂",
+        "󰁹"
+      ],
+      "format-plugged": "󱘖 {capacity}%",
+      "on-click": "",
+      "states": {
+        "critical": 15,
+        "warning": 30
+      },
+      "tooltip": false
+    },
+    "clock": {
+      "format": "  {:%H:%M}",
+      "tooltip": false
+    },
+    "clock#date": {
+      "format": "  {:%a %Y-%m-%d}",
+      "tooltip": false
+    },
+    "cpu": {
+      "format": "  {usage:2}%",
+      "interval": 5,
+      "tooltip": true
+    },
+    "custom/notification": {
+      "escape": true,
+      "exec": "swaync-client -swb",
+      "exec-if": "which swaync-client",
+      "format": "{icon}",
+      "format-icons": {
+        "dnd-inhibited-none": "",
+        "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+        "dnd-none": "",
+        "dnd-notification": "<span foreground='red'><sup></sup></span>",
+        "inhibited-none": "",
+        "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+        "none": "",
+        "notification": "<span foreground='red'><sup></sup></span>"
+      },
+      "on-click": "~/.local/bin/task-waybar",
+      "return-type": "json",
+      "tooltip": false
+    },
+    "disk": {
+      "format": "󰋊  {free}",
+      "path": "/var/home/",
+      "tooltip": true
+    },
+    "niri/language": {
+      "format": "󰥻  {}",
+      "format-en": "us",
+      "format-ru": "ru",
+      "format-uk": "ua"
+    },
+    "niri/window": {
+      "max-length": 35,
+      "separate-outputs": false
+    },
+    "niri/workspaces": {
+      "format": "{icon}",
+      "format-icons": {
+        "active": " ",
+        "default": " ",
+        "urgent": " "
+      },
+      "on-scroll-down": "hyprctl dispatch workspace e-1",
+      "on-scroll-up": "hyprctl dispatch workspace e+1",
+      "persistent-workspaces": {
+        "*": 10
+      }
+    },
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": " ",
+        "deactivated": " "
+      },
+      "tooltip": "true"
+    },
+    "layer": "top",
+    "memory": {
+      "format": "  {used}GiB",
+      "interval": 5,
+      "tooltip": true
+    },
+    "modules-center": [
+      "network",
+      "pulseaudio",
+      "cpu",
+      "niri/workspaces",
+      "memory",
+      "disk",
+    ],
+    "modules-left": [
+      "mpris",
+    ],
+    "modules-right": [
+      "niri/language",
+      "clock",
+      "clock#date",
+      "idle_inhibitor",
+      "custom/notification",
+      "battery"
+    ],
+    "network": {
+      "format-disconnected": "󰤮",
+      "format-ethernet": ": {bandwidthDownOctets}",
+      "format-icons": [
+        "󰤯",
+        "󰤟",
+        "󰤢",
+        "󰤥",
+        "󰤨"
+      ],
+      "format-wifi": "{icon}  {signalStrength}%",
+      "tooltip": false
+    },
+    "position": "top",
+    "pulseaudio": {
+      "format": "{icon} {volume}% {format_source}",
+      "format-bluetooth": "{volume}% {icon} {format_source}",
+      "format-bluetooth-muted": " {icon} {format_source}",
+      "format-icons": {
+        "car": "",
+        "default": [
+          "",
+          "",
+          ""
+        ],
+        "hands-free": "",
+        "headphone": "",
+        "headset": "",
+        "phone": "",
+        "portable": ""
+      },
+      "format-muted": " {format_source}",
+      "format-source": " {volume}%",
+      "format-source-muted": "",
+      "on-click": "pavucontrol"
+    },
+  }
+]
