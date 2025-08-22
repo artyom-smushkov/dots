@@ -22,9 +22,9 @@
 (straight-use-package 'org)
 
 (use-package straight
-:custom
-;; add project and flymake to the pseudo-packages variable so straight.el doesn't download a separate version than what eglot downloads.
-(straight-built-in-pseudo-packages '(emacs nadvice python eglot image-mode project flymake)))
+  :custom
+  ;; add project and flymake to the pseudo-packages variable so straight.el doesn't download a separate version than what eglot downloads.
+  (straight-built-in-pseudo-packages '(emacs nadvice python eglot image-mode project flymake)))
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -33,7 +33,7 @@
 
 (set-face-attribute 'default nil :family "VictorMono Nerd Font" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "VictorMono Nerd Font" :height 110)
-(set-face-attribute 'variable-pitch nil :family "Fira Sans" :height 125 :weight 'regular)
+;; (set-face-attribute 'variable-pitch nil :family "Fira Sans" :height 125 :weight 'regular)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
@@ -56,6 +56,7 @@
 (setq scroll-step 1)
 
 (setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
 
 (use-package all-the-icons
   :if (display-graphic-p))
@@ -98,7 +99,7 @@
 
 ;; (use-package evil-commentary
 ;;   :after evil
-  ;; :config (evil-commentary-mode))
+;; :config (evil-commentary-mode))
 
 (use-package evil-surround
   :config
@@ -363,7 +364,7 @@
 
 (use-package marginalia
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
 
@@ -406,14 +407,14 @@
   :config
   (add-to-list 'eglot-server-programs '(web-mode "vls"))
   (setq-default
-     eglot-workspace-configuration
-     '(:basedpyright (
-         :typeCheckingMode "basic"
-       )
-       :python (
-         :pythonPath "/usr/local/bin/python3"
-       )
-       ))
+   eglot-workspace-configuration
+   '(:basedpyright (
+                    :typeCheckingMode "basic"
+                    )
+                   :python (
+                            :pythonPath "/usr/local/bin/python3"
+                            )
+                   ))
 
   :hook
   ((python-mode) . eglot-ensure))
@@ -467,8 +468,8 @@
 ;;   (lsp-ui-doc-show-with-cursor t))
 
 (use-package flycheck
-   :config
-   (add-hook 'after-init-hook #'global-flycheck-mode))
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (use-package web-mode
   :hook
@@ -485,8 +486,8 @@
 
 (use-package corfu
   :hook ((prog-mode . corfu-mode)
-       (shell-mode . corfu-mode)
-       (eshell-mode . corfu-mode))
+         (shell-mode . corfu-mode)
+         (eshell-mode . corfu-mode))
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -513,23 +514,25 @@
   ;; :straight
   ;; (:host github :repo "tninja/aider.el" :files ("aider.el" "aider-core.el" "aider-file.el" "aider-code-change.el" "aider-discussion.el" "aider-prompt-mode.el" "aider-agile.el" "aider-code-read.el" "aider-legacy-code.el"))
   :config
-   (setq aider-args `(;;"--model" "lm_studio/bartowski/qwen_qwq-32b"
-	             ;; "--model" "lm_studio/bartowski/mistralai_Mistral-Small-3.1-24B-Instruct-2503-GGUF"
-		     ;; "--model" "lm_studio/bartowski/deepcogito_cogito-v1-preview-qwen-32B-GGUF"
-		     ;; "--model" "lm_studio/bartowski/THUDM_GLM-4-32B-0414-GGUF"
-		     ;; "--model" "lm_studio/bartowski/Qwen2.5-Coder-32B-Instruct-GGUF"
-		     ;; "--model" "lm_studio/unsloth/qwen3-30b-a3b"
-		     ;; "--model" "lm_studio/unsloth/qwen3-30b-a3b-instruct-2507"
-		     "--model" "lm_studio/unsloth/qwen3-coder-30b-a3b-instruct"
-		     ;; "--model" "lm_studio/unsloth/qwen3-14b"
-		     ;; "--model" "lm_studio/unsloth/qwen3-32b"
+  (setq aider-args `(;;"--model" "lm_studio/bartowski/qwen_qwq-32b"
+                     ;; "--model" "lm_studio/bartowski/mistralai_Mistral-Small-3.1-24B-Instruct-2503-GGUF"
+                     ;; "--model" "lm_studio/bartowski/deepcogito_cogito-v1-preview-qwen-32B-GGUF"
+                     ;; "--model" "lm_studio/bartowski/THUDM_GLM-4-32B-0414-GGUF"
+                     ;; "--model" "lm_studio/bartowski/Qwen2.5-Coder-32B-Instruct-GGUF"
+                     ;; "--model" "lm_studio/unsloth/qwen3-30b-a3b"
+                     ;; "--model" "lm_studio/unsloth/qwen3-30b-a3b-instruct-2507"
+                     "--model" "lm_studio/unsloth/qwen3-coder-30b-a3b-instruct"
+                     ;; "--model" "lm_studio/openai/gpt-oss-20b"
+                     ;; "--model" "lm_studio/unsloth/qwen3-14b"
+                     ;; "--model" "lm_studio/unsloth/qwen3-32b"
                      ;; "--model" "anthropic/claude-3-7-sonnet-20250219"
-		     ;; "--anthropic-api-key" ,ANTHROPIC_KEY
-	             "--no-auto-commits"
-	             "--no-show-model-warnings"
+                     ;; "--anthropic-api-key" ,ANTHROPIC_KEY
+                     "--no-auto-commits"
+                     "--no-show-model-warnings"
+                     ;; "--reasoning-effort" "high"
                      "--map-tokens" "0")))
 ;; (setq aider-args `("--model" "codestral/codestral-latest" "--api-key" ,(format "CODESTRAL=%s" CODESTRAL_KEY) "--no-auto-commits" "--subtree-only")))
- ;; (setq aider-args `("--model" "anthropic/claude-3-7-sonnet-20250219" "--anthropic-api-key" ,ANTHROPIC_KEY "--no-auto-commits" "--watch-files" "--map-tokens" "0")))
+;; (setq aider-args `("--model" "anthropic/claude-3-7-sonnet-20250219" "--anthropic-api-key" ,ANTHROPIC_KEY "--no-auto-commits" "--watch-files" "--map-tokens" "0")))
 
 (use-package minuet
   :straight (minuet :host github :repo "milanglacier/minuet-ai.el") 
@@ -539,41 +542,27 @@
    :map minuet-active-mode-map
    ("M-p" . #'minuet-previous-suggestion)
    ("M-n" . #'minuet-next-suggestion)
-   ("M-<tab>" . #'minuet-accept-suggestion)
-   ("M-TAB" . #'minuet-accept-suggestion)
+   ("C-<tab>" . #'minuet-accept-suggestion)
+   ("C-TAB" . #'minuet-accept-suggestion)
    ;; Accept the first line of completion, or N lines with a numeric-prefix:
    ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
-   ("C-TAB" . #'minuet-accept-suggestion-line)
-   ("C-<tab>" . #'minuet-accept-suggestion-line)
+   ;; ("C-TAB" . #'minuet-accept-suggestion-line)
+   ;; ("C-<tab>" . #'minuet-accept-suggestion-line)
    ("M-e" . #'minuet-dismiss-suggestion))
 
   :hook
-  ;; (prog-mode . minuet-auto-suggestion-mode)
+  (prog-mode . minuet-auto-suggestion-mode)
   (minuet-active-mode-hook . evil-normalize-keymaps)
 
   :config
-  (setq minuet-provider 'openai-compatible)
+  (setq minuet-provider 'openai-fim-compatible)
   (setq minuet-context-window 4000)
   (setq minuet-n-completions 1)
-  ;;     (setq minuet-default-guidelines
-  ;; "/nothink Guidelines:
-  ;; 1. Offer completions after the `<cursorPosition>` marker.
-  ;; 2. Make sure you have maintained the user's existing whitespace and indentation.
-  ;;    This is REALLY IMPORTANT!
-  ;; 3. Provide multiple completion options when possible.
-  ;; 4. Return completions separated by the marker <endCompletion>.
-  ;; 5. The returned message will be further parsed and processed. DO NOT include
-  ;;    additional comments or markdown code block fences. Return the result directly.
-  ;; 6. Keep each completion option concise, limiting it to a single line.
-  ;;    Never add new lines, only complete line where user's cursor is at the moment.
-  ;; 7. Create entirely new code completion that DO NOT REPEAT OR COPY any user's existing code around <cursorPosition>.")
-  (plist-put minuet-openai-compatible-options :end-point "http://localhost:8080/v1/completions")
+  (plist-put minuet-openai-fim-compatible-options :end-point "http://localhost:8080/v1/completions")
   ;; an arbitrary non-null environment variable as placeholder
-  (plist-put minuet-openai-compatible-options :name "Llama.cpp")
-  (plist-put minuet-openai-compatible-options :api-key "TERM")
-  ;; The model is set by the llama-cpp server and cannot be altered
-  ;; post-launch.
-  (plist-put minuet-openai-compatible-options :model "PLACEHOLDER")
+  (plist-put minuet-openai-fim-compatible-options :name "Llama.cpp")
+  (plist-put minuet-openai-fim-compatible-options :api-key "TERM")
+  (plist-put minuet-openai-fim-compatible-options :model "qwen3-coder-30b-a3b-instruct")
 
   ;; Llama.cpp does not support the `suffix` option in FIM completion.
   ;; Therefore, we must disable it and manually populate the special
@@ -632,11 +621,11 @@
 (use-package eshell
   :ensure nil
   :hook ((eshell-mode . (lambda ()
-			  (setenv "PATH" (concat "/home/linuxbrew/.linuxbrew/bin:" (getenv "PATH")))
+			              (setenv "PATH" (concat "/home/linuxbrew/.linuxbrew/bin:" (getenv "PATH")))
                           (setq-local corfu-count 7)
                           (setq-local corfu-auto nil)
                           (setq-local corfu-preview-current nil))))
-                          ;; (setq-local completion-at-point-functions '(pcomplete-completions-at-point cape-file)))))
+  ;; (setq-local completion-at-point-functions '(pcomplete-completions-at-point cape-file)))))
   :custom
   (eshell-history-size 1024)
   (eshell-pushd-dunique t)
@@ -679,34 +668,34 @@ Stole from aweshell"
 
 (defun ars/get-new-eshell-name ()
   (if (get-buffer "*host eshell*")
-  "*unnamed eshell*"
-  "*host eshell*"))
+      "*unnamed eshell*"
+    "*host eshell*"))
 
 (defun ars/create-eshell (&optional create-new-frame)
   "creates a shell with a given name or swithes to it if it already exists"
   (interactive)
   (let* ((create-new-frame (and create-new-frame t))
-	   (buffer-name (ars/get-new-eshell-name)))
+	     (buffer-name (ars/get-new-eshell-name)))
     (if (get-buffer buffer-name)
-	  (switch-to-buffer buffer-name)
+	    (switch-to-buffer buffer-name)
 	  (let ((frame (if (not create-new-frame) (selected-frame) (make-frame))))
 		(progn
-		(select-frame-set-input-focus frame)
-		(eshell)
-		(rename-buffer buffer-name))))))
+		  (select-frame-set-input-focus frame)
+		  (eshell)
+		  (rename-buffer buffer-name))))))
 
 (use-package eshell-prompt-extras
   :config
   (setq eshell-highlight-prompt nil
         epe-show-git-status-extended t
         epe-path-style 'full
-	eshell-prompt-function 'epe-theme-multiline-with-status))
-        ;; eshell-prompt-function (lambda () (propertize (epe-theme-multiline-with-status)
-        ;;                                    'read-only t
-	;; 				   'font-face-lock 'eshell-prompt
-	;; 				   'field nil
-	;; 				   'front-sticky t
-        ;;                                    'rear-nonsticky t))))
+	    eshell-prompt-function 'epe-theme-multiline-with-status))
+;; eshell-prompt-function (lambda () (propertize (epe-theme-multiline-with-status)
+;;                                    'read-only t
+;; 				   'font-face-lock 'eshell-prompt
+;; 				   'field nil
+;; 				   'front-sticky t
+;;                                    'rear-nonsticky t))))
 
 (use-package esh-autosuggest
   :hook (eshell-mode . esh-autosuggest-mode))
@@ -714,14 +703,14 @@ Stole from aweshell"
 (defun eshell/shallow-research ()
   (eshell/cd "~/Development/shallow-research/")
   (if (string= "" (shell-command-to-string "docker compose -f docker-compose-dev.yml ps | grep Up"))
-     (shell-command-to-string "docker compose -f docker-compose-dev.yml up -d --build"))
+      (shell-command-to-string "docker compose -f docker-compose-dev.yml up -d --build"))
   (eshell/cd "/docker:shallow_research_dev:/home/shallow-research/shallow-research/")
   (rename-buffer "*shallow-research eshell*"))
 
 (defun eshell/piiq-local ()
   (eshell/cd "~/Development/piiq-dev-containers")
   (if (string= "" (shell-command-to-string "docker compose ps | grep Up"))
-     (shell-command-to-string "docker compose up -d --build"))
+      (shell-command-to-string "docker compose up -d --build"))
   (eshell/cd "/docker:piiq:/home/piiq/piiq-media/")
   (rename-buffer "*piiq local eshell*"))
 
@@ -832,31 +821,31 @@ Stole from aweshell"
         (shell-command "docker compose restart")
         (eshell/cd "../cronserver")
         (shell-command "docker compose restart")
-      (eshell/cd "../../"))
+        (eshell/cd "../../"))
     (eshell/echo "Current directory is not a piiq project root")))
 
 (use-package gptel
-    :config
-    (setq
-     ;; gptel--system-message "You are Mistral Small 3, a Large Language Model (LLM) created by Mistral AI, a French startup headquartered in Paris.
-;; Your knowledge base was last updated on 2023-10-01. The current date is 2025-01-30.
-;; When you're not sure about some information, you say that you don't have the information and don't make up anything.
-;; If the user's question is not clear, ambiguous, or does not provide enough context for you to accurately answer the question, you do not try to answer it right away and you rather ask the user to clarify their request (e.g. \"What are some good restaurants around me?\" => \"Where are you?\" or \"When is the next flight to Tokyo\" => \"Where do you travel from?\")"
-     gptel-temperature 0.15
-     gptel-model 'llamacpp
-     gttel--system-message "Enable deep thinking subroutine"
-     gptel-backend (gptel-make-openai "llama-cpp"          ;Any name
-                     :stream t                             ;Stream responses
-                     :protocol "http"
-                     :host "localhost:8081"                ;Llama.cpp server location
-                     :models '(llamacpp))
-     gptel-default-mode 'org-mode))
-  ;; (setq gptel-api-key OPENAI_KEY)
-  ;; (setq gptel-model "gpt-4o"))
+  :config
+  (setq
+   ;; gptel--system-message "You are Mistral Small 3, a Large Language Model (LLM) created by Mistral AI, a French startup headquartered in Paris.
+   ;; Your knowledge base was last updated on 2023-10-01. The current date is 2025-01-30.
+   ;; When you're not sure about some information, you say that you don't have the information and don't make up anything.
+   ;; If the user's question is not clear, ambiguous, or does not provide enough context for you to accurately answer the question, you do not try to answer it right away and you rather ask the user to clarify their request (e.g. \"What are some good restaurants around me?\" => \"Where are you?\" or \"When is the next flight to Tokyo\" => \"Where do you travel from?\")"
+   gptel-temperature 0.7
+   gptel-model 'llamacpp
+   gttel--system-message "Enable deep thinking subroutine"
+   gptel-backend (gptel-make-openai "llama-cpp"          ;Any name
+                   :stream t                             ;Stream responses
+                   :protocol "http"
+                   :host "localhost:8080"                ;Llama.cpp server location
+                   :models '(llamacpp))
+   gptel-default-mode 'org-mode))
+;; (setq gptel-api-key OPENAI_KEY)
+;; (setq gptel-model "gpt-4o"))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
-  (variable-pitch-mode 1)
+  ;; (variable-pitch-mode 1)
   (visual-line-mode 1))
 
 (defun efs/org-font-setup ()
@@ -874,7 +863,7 @@ Stole from aweshell"
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Fira Sans" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "VictorMono NerdFont" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -909,13 +898,13 @@ Stole from aweshell"
                                 (directory-files-recursively "~/Documents/Org/Development/" "\\.org$"))))
   (setq org-agenda-align-tags-to-column 90)
   (setq org-agenda-prefix-format
-      '((agenda . " %i %?-12t% s")
-        (todo . " %i")
-        (tags . " %i")
-        (search . " %i")))
+        '((agenda . " %i %?-12t% s")
+          (todo . " %i")
+          (tags . " %i")
+          (search . " %i")))
   (setq org-directory "~/Documents/Org")
   (setq org-link-frame-setup
-      '((file . find-file)))
+        '((file . find-file)))
 
   (efs/org-font-setup)
   (require 'org-tempo)
@@ -934,17 +923,17 @@ Stole from aweshell"
   :config
   (setq org-pretty-entities t)
   (setq org-modern-fold-stars
-	'(("◉" . "◉")
-	  ("○" . "○")
-	  ("●" . "●")
-	  ("○" . "○")
-	  ("●" . "●")
-	  ("○" . "○")
-	  ("●" . "●")))
+	    '(("◉" . "◉")
+	      ("○" . "○")
+	      ("●" . "●")
+	      ("○" . "○")
+	      ("●" . "●")
+	      ("○" . "○")
+	      ("●" . "●")))
   (setq org-modern-checkbox
-	'((88 . "󰱒")
-	  (45 . "󱋭")
-	  (32 . "󰄱"))))
+	    '((88 . "󰱒")
+	      (45 . "󱋭")
+	      (32 . "󰄱"))))
 
 (defun my-prompt-knowledge-areas ()
   (let* ((base-dir "~/Documents/Org/")
@@ -1000,9 +989,9 @@ Stole from aweshell"
          :empty-lines 0)))
 
 (org-babel-do-load-languages
-  'org-babel-load-languages
-  '((emacs-lisp . t)
-    (python . t)))
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)))
 
 (push '("conf-unix" . conf-unix) org-src-lang-modes)
 
@@ -1029,7 +1018,7 @@ Stole from aweshell"
   (org-node-backlink-mode)
   (setq org-node-ask-directory t)
   (setq org-node-extra-id-dirs
-    '("~/Documents/Org/"))
+        '("~/Documents/Org/"))
   (setq org-node-backlink-aggressive t))
 
 ;; (use-package git-auto-commit-mode
