@@ -1,6 +1,7 @@
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Input
+
 input {
     keyboard {
         xkb {
@@ -8,6 +9,7 @@ input {
             options "grp:alt_space_toggle,caps:capslock"
         }
         numlock
+        track-layout "window"
     }
 
     // Next sections include libinput settings.
@@ -286,7 +288,7 @@ spawn-at-startup "flatpak" "run" "org.telegram.desktop"
 spawn-at-startup "flatpak" "run" "com.github.wwmm.easyeffects"
 spawn-at-startup "flatpak" "run" "com.logseq.Logseq" "--disable-gpu"
 spawn-at-startup "/var/home/templarrr/AppImages/cider.appimage" "--disable-gpu"
-spawn-at-startup "/home/templarrr/AppImages/lm_studio.appimage" "--disable-gpu"
+spawn-at-startup "/var/home/templarrr/AppImages/lm_studio.appimage" "--disable-gpu"
 spawn-at-startup "flatpak" "run" "com.vivaldi.Vivaldi"
 // spawn-at-startup "daily-sync-changes.sh"
 
@@ -409,15 +411,13 @@ window-rule {
 }
 
 window-rule {
-    match app-id="org.telegram.desktop"
-    exclude title="Telegram"
+    match app-id="org.telegram.desktop" title="Media viewer"
     open-floating true
     open-focused true
 }
 
 window-rule {
-    match app-id="org.telegram.desktop"
-    exclude title="Media viewer"
+    match app-id="org.telegram.desktop" title="Telegram"
     open-on-workspace "8"
     open-maximized false
     open-focused false
