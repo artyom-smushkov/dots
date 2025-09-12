@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 SESSION_NAME="shallow-research"
-LOCAL_PASH="/var/home/templarrr/development/shallow-research/"
+LOCAL_PATH="/var/home/templarrr/Development/shallow-research/"
 
 if ! tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     tmux new-session -d -s "$SESSION_NAME"
-    cd "$LOCAL_PASH"
+    cd "$LOCAL_PATH"
     is_running=$(docker compose -f docker-compose-dev.yml ps | grep up)
     if [ -z "$is_running" ]; then
         docker compose -f docker-compose-dev.yml up -d --build
