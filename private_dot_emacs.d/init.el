@@ -43,6 +43,7 @@
                 vterm-mode-hook
                 eat-mode-hook
                 shell-mode-hook
+                markdown-mode-hook
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
@@ -842,6 +843,27 @@ Stole from aweshell"
      gptel-default-mode 'org-mode))
   ;; (setq gptel-api-key OPENAI_KEY)
   ;; (setq gptel-model "gpt-4o"))
+
+(use-package markdown-mode
+  :config
+  (dolist (face '((markdown-header-face-1 . 1.4)
+                  (markdown-header-face-2 . 1.3)
+                  (markdown-header-face-3 . 1.2)
+                  (markdown-header-face-4 . 1.1)
+                  (markdown-header-face-5 . 1.1)
+                  (markdown-header-face-6 . 1.1)))
+    (set-face-attribute (car face) nil
+                        :font "VictorMono NerdFont"
+                        :weight 'regular
+                        :height (cdr face)))
+
+  :hook (markdown-mode . my-markdown-setup))
+
+(defun my-markdown-setup ()
+  "Personal settings for `markdown-mode`."
+  (setq visual-fill-column-width 150
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
 
 (defun efs/org-mode-setup ()
   (org-indent-mode)
