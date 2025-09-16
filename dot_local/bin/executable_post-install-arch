@@ -4,7 +4,7 @@ pacman -Syu
 pacman -Sy docker podman podman-compose docker-compose sddm \
        foot chezmoi syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
        emacs \
-       hyprland hypridle hyprlock \
+       hypridle hyprlock \
        vivaldi firefox \
        distrobox \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
@@ -12,6 +12,7 @@ pacman -Sy docker podman podman-compose docker-compose sddm \
        telegram-desktop \
        darktable reaper ardour guitarix easyeffects \
        mpv tigervnc steam 
+pacman -R kitty
         
 flatpak override --user --filesystem=~/.themes/
 flatpak override --user --filesystem=~/.icons/
