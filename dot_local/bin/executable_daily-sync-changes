@@ -1,0 +1,5 @@
+#!/bin/bash
+
+chezmoi update
+
+daily-install

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+pacman -Syu
+pacman -Sy docker podman podman-compose docker-compose sddm \
+       foot chezmoi syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
+       emacs \
+       hyprland hypridle hyprlock \
+       vivaldi firefox \
+       distrobox \
+       gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
+       geary loupe gnome-maps nautilus sushi papers gnome-weather gnome-font-viewer mission-center \
+       telegram-desktop \
+       darktable reaper ardour guitarix easyeffects \
+       mpv tigervnc steam 
+        
+flatpak override --user --filesystem=~/.themes/
+flatpak override --user --filesystem=~/.icons/
+flatpak override --user --filesystem=xdg-config/gtk-4.0
+flatpak override --user --filesystem=xdg-config/gtk-3.0
+
+read -p "Was this a clean installation? (y/n): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    distrobox assemble create --file .config/distrobox/assemble.ini
+    
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    git clone https://artyom-smushkov:${GITHUB_PASSWORD}@github.com/artyom-smushkov/piiq-dev.git /home/templarrr/Development/piiq-dev-containers
+    
+    until read -s -p "Bitbucket password: " BITBUCKET_PASSWORD && git clone https://artyom_smushkov:${BITBUCKET_PASSWORD}@bitbucket.org/piiqmedia/piiq-media.git /home/templarrr/Development/piiq-src
+    do
+        echo "Git clone failed, likely invalid password, try again"
+    done
+fi
+
+daily-install
+
+systemctl --user enable syncthing.service
+systemctl --user start syncthing.service
+
+xdg-mime default com.vivaldi.Vivaldi.desktop x-scheme-handler/https
+xdg-mime default com.vivaldi.Vivaldi.desktop x-scheme-handler/http
+
+git config --global user.email "artyom.smushkov@gmail.com"
+git config --global user.name "Artem Smushkov"

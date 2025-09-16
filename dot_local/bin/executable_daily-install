@@ -1,0 +1,37 @@
+#!/bin/bash
+
+DESIRED_FLATPAKS_PROGRAMS=$(
+echo "me.proton.Pass
+com.protonvpn.www
+io.github.flattool.Ignition
+io.github.flattool.Warehouse
+com.slack.Slack
+com.anydesk.Anydesk
+org.darktable.Darktable
+app.zen_browser.zen
+com.vivaldi.Vivaldi
+com.brave.Browser
+com.saivert.pwvucontrol
+org.mozilla.firefox
+com.github.tchx84.Flatseal"
+)
+
+CURRENT_FLATPAK_PROGRAMS=$(flatpak list --app --columns=application)
+
+for app in $DESIRED_FLATPAKS_PROGRAMS; do
+    if ! echo "$CURRENT_FLATPAK_PROGRAMS" | grep -q "$app"; then
+	echo "Installing $app..."
+	flatpak install -y "${app}"
+    fi
+done
+
+echo $DESIRED_FLATPAKS_PROGRAMS
+
+for app in $CURRENT_FLATPAK_PROGRAMS; do
+    if ! echo $DESIRED_FLATPAKS_PROGRAMS | grep -q "$app"; then
+	echo "Removing $app..."
+	flatpak uninstall -y "${app}"
+    fi
+done
+
+brew bundle install --file /var/home/templarrr/.config/brewfile/Brewfile --cleanup --upgrade --upgrade-formulae
