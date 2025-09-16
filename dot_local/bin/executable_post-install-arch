@@ -13,7 +13,6 @@ sudo pacman -Sy docker podman podman-compose docker-compose \
        telegram-desktop \
        darktable reaper ardour guitarix easyeffects \
        mpv tigervnc steam 
-sudo pacman -R kitty chezmoi
         
 flatpak override --user --filesystem=~/.themes/
 flatpak override --user --filesystem=~/.icons/
@@ -45,3 +44,5 @@ xdg-mime default com.vivaldi.Vivaldi.desktop x-scheme-handler/http
 
 git config --global user.email "artyom.smushkov@gmail.com"
 git config --global user.name "Artem Smushkov"
+
+sudo pacman -R kitty chezmoi
