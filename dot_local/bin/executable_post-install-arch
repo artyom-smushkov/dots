@@ -1,8 +1,9 @@
 #!/bin/bash
 
-pacman -Syu
-pacman -Sy docker podman podman-compose docker-compose \
-       foot chezmoi syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
+sudo pacman -Syu
+sudo pacman -Sy docker podman podman-compose docker-compose \
+       git \
+       foot syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
        emacs \
        hypridle hyprlock \
        vivaldi firefox \
@@ -12,7 +13,7 @@ pacman -Sy docker podman podman-compose docker-compose \
        telegram-desktop \
        darktable reaper ardour guitarix easyeffects \
        mpv tigervnc steam 
-pacman -R kitty chezmoi
+sudo pacman -R kitty chezmoi
         
 flatpak override --user --filesystem=~/.themes/
 flatpak override --user --filesystem=~/.icons/
@@ -34,7 +35,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     done
 fi
 
-daily-install
+~/.local/bin/daily-install
 
 systemctl --user enable syncthing.service
 systemctl --user start syncthing.service
