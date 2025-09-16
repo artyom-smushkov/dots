@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pacman -Syu
-pacman -Sy docker podman podman-compose docker-compose sddm \
+pacman -Sy docker podman podman-compose docker-compose \
        foot chezmoi syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
        emacs \
        hypridle hyprlock \
