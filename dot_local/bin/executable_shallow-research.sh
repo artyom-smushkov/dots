@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 SESSION_NAME="shallow-research"
-LOCAL_PATH="/var/home/templarrr/Development/shallow-research/"
+LOCAL_PATH="/home/templarrr/Development/shallow-research/"
 
 if ! tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     tmux new-session -d -s "$SESSION_NAME"

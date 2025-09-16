@@ -34,4 +34,4 @@ for app in $CURRENT_FLATPAK_PROGRAMS; do
     fi
 done
 
-brew bundle install --file /var/home/templarrr/.config/brewfile/Brewfile --cleanup --upgrade
+brew bundle install --file /home/templarrr/.config/brewfile/Brewfile --cleanup --upgrade
