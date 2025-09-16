@@ -22,7 +22,7 @@ flatpak override --user --filesystem=xdg-config/gtk-3.0
 read -p "Was this a clean installation? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    distrobox assemble create --file .config/distrobox/assemble.ini
+    # distrobox assemble create --file .config/distrobox/assemble.ini
     
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     
