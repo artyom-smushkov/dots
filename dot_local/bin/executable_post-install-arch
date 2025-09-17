@@ -2,14 +2,14 @@
 
 sudo pacman -Syu
 sudo pacman -Sy docker podman podman-compose docker-compose \
-       git \
+       git cmake cpio meson \
        foot syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
        emacs \
        hypridle hyprlock \
        vivaldi firefox \
        distrobox \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
-       geary loupe gnome-maps nautilus sushi papers gnome-weather gnome-font-viewer mission-center \
+       geary loupe gnome-maps nautilus sushi papers gnome-weather gnome-font-viewer mission-center gnome-boxes \
        telegram-desktop \
        darktable reaper ardour guitarix easyeffects \
        mpv tigervnc steam 
@@ -46,3 +46,7 @@ git config --global user.email "artyom.smushkov@gmail.com"
 git config --global user.name "Artem Smushkov"
 
 sudo pacman -R kitty chezmoi
+
+hyprpm update
+hyprpm add https://github.com/hyprwm/hyprland-plugins
+hyprpm enable hyprscrolling
