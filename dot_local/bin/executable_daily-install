@@ -3,16 +3,12 @@
 DESIRED_FLATPAKS_PROGRAMS=$(
 echo "me.proton.Pass
 com.protonvpn.www
-io.github.flattool.Ignition
 io.github.flattool.Warehouse
 com.slack.Slack
 com.anydesk.Anydesk
-org.darktable.Darktable
 app.zen_browser.zen
-com.vivaldi.Vivaldi
 com.brave.Browser
 com.saivert.pwvucontrol
-org.mozilla.firefox
 com.github.tchx84.Flatseal"
 )
 
