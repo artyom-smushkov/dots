@@ -58,11 +58,11 @@
                 "actions": [
                     {
                         "label": "󰐥",
-                        "command": "systemctl poweroff"
+                        "command": "loginctl poweroff"
                     },
                     {
                         "label": "󰜉",
-                        "command": "systemctl reboot"
+                        "command": "loginctl reboot"
                     },
                     {
                         "label": "",
