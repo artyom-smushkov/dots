@@ -69,17 +69,17 @@
       "path": "/home/",
       "tooltip": true
     },
-    "niri/language": {
+    "hyprland/language": {
       "format": "󰥻  {}",
       "format-en": "us",
       "format-ru": "ru",
       "format-uk": "ua"
     },
-    "niri/window": {
+    "hyprland/window": {
       "max-length": 35,
       "separate-outputs": false
     },
-    "niri/workspaces": {
+    "hyprland/workspaces": {
       "format": "{icon}",
       "format-icons": {
         "active": " ",
@@ -110,7 +110,7 @@
       "network",
       "pulseaudio",
       "cpu",
-      "niri/workspaces",
+      "hyprland/workspaces",
       "memory",
       "disk",
     ],
@@ -118,7 +118,7 @@
       "mpris",
     ],
     "modules-right": [
-      "niri/language",
+      "hyprland/language",
       "clock",
       "clock#date",
       "idle_inhibitor",
