@@ -1,0 +1,25 @@
+#!/bin/bash
+
+sudo emerge -av \
+    app-shells/fish \
+    app-shells/zsh \
+    app-shells/starship \
+    app-misc/tmux \
+    sys-apps/fd \
+    sys-apps/eza \
+    sys-apps/ripgrep \
+    sys-block/dust \
+    sys-fs/duf \
+    sys-process/procs \
+    sys-process/btop \
+    sys-process/htop \
+    sys-process/nvtop \
+    app-editors/neovim \
+    app-shells/fzf \
+    app-backup/borgbackup \
+    app-backup/borgmatic \
+    app-admin/chezmoi \
+    app-misc/task \
+    app-text/pandoc \
+    app-text/typst \
+    dev-util/cloc
