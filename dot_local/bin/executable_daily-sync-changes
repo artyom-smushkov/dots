@@ -1,5 +1,5 @@
 #!/bin/bash
 
-chezmoi update
+chezmoi update --force
 
 daily-install
