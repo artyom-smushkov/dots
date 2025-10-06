@@ -2,12 +2,11 @@
 
 DESIRED_FLATPAKS_PROGRAMS=$(
 echo "me.proton.Pass
-com.protonvpn.www
+com.rafaelmardojai.Blanket
+it.mijorus.gearlever
 io.github.flattool.Warehouse
-com.slack.Slack
 com.anydesk.Anydesk
 app.zen_browser.zen
-com.brave.Browser
 com.saivert.pwvucontrol
 com.github.tchx84.Flatseal"
 )
@@ -29,5 +28,3 @@ for app in $CURRENT_FLATPAK_PROGRAMS; do
 	flatpak uninstall -y "${app}"
     fi
 done
-
-brew bundle install --file /home/templarrr/.config/brewfile/Brewfile --cleanup --upgrade
