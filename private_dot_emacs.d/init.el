@@ -31,6 +31,8 @@
 (scroll-bar-mode -1)
 (add-to-list 'default-frame-alist '(undecorated . t))
 
+;; (setq tsc-dyn-dir "~/.emacs.d/straight/build/tsc/")
+
 (set-face-attribute 'default nil :family "VictorMono Nerd Font" :height 110)
 (set-face-attribute 'fixed-pitch nil :family "VictorMono Nerd Font" :height 110)
 ;; (set-face-attribute 'variable-pitch nil :family "Fira Sans" :height 125 :weight 'regular)
@@ -369,27 +371,36 @@
   :init
   (marginalia-mode))
 
-(use-package tree-sitter
-  :hook
-  (python-mode . tree-sitter-hl-mode)
-  (javascript-mode . tree-sitter-hl-mode)
-  (dockerfile-mode . tree-sitter-hl-mode)
-  (rust-mode . tree-sitter-hl-mode)
-  (lua-mode . tree-sitter-hl-mode)
-  (sh-mode . tree-sitter-hl-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
   :config
-  (global-tree-sitter-mode))
-(use-package tree-sitter-langs)
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package highlight-indent-guides
-  :hook
-  (prog-mode . highlight-indent-guides-mode)
+;; (use-package highlight-indent-guides
+;;   :hook
+;;   (prog-mode . highlight-indent-guides-mode)
+;;   :custom
+;;   (highlight-indent-guides-auto-character-face-perc 80)
+;;   (highlight-indent-guides-method 'character))
+
+(use-package indent-bars
   :custom
-  (highlight-indent-guides-auto-character-face-perc 80)
-  (highlight-indent-guides-method 'character))
+  (indent-bars-no-descend-lists t)
+  (indent-bars-treesit-support t)
+  (indent-bars-treesit-ignore-blank-lines-types '("module"))
+  (indent-bars-treesit-scope '((python function_definition class_definition for_statement
+                                       if_statement with_statement while_statement)))
+  :hook
+  (prog-mode . (lambda ()
+                 (unless (derived-mode-p 'tsx-ts-mode)
+                   (indent-bars-mode)))))
 
 (use-package autopair
   :hook
@@ -418,7 +429,7 @@
        ))
 
   :hook
-  ((python-mode) . eglot-ensure))
+  ((python-ts-mode) . eglot-ensure))
 
 (use-package eldoc-box)
 
@@ -472,10 +483,19 @@
    :config
    (add-hook 'after-init-hook #'global-flycheck-mode))
 
+;; (use-package flymake-jsts
+;;   :straight '(flymake-jsts :type git :host github :repo "orzechowskid/flymake-jsts" :branch "main"))
+
+;; (use-package tsx-mode
+;;   :straight '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs30"))
+
+
+
 (use-package web-mode
   :hook
   (web-mode . eglot-ensure)
   :mode "\\.vue\\'")
+
 (use-package dockerfile-mode)
 (use-package docker-compose-mode)
 (use-package zig-mode)
@@ -483,7 +503,9 @@
 (use-package rust-mode)
 (use-package kdl-mode)
 (use-package hyprlang-ts-mode
-  :mode "^hypr.*\\.conf$")
+  :ensure t
+  :custom
+  (hyprlang-ts-mode-indent-offset 2))
 
 (use-package corfu
   :hook ((prog-mode . corfu-mode)
@@ -902,6 +924,10 @@ Stole from aweshell"
   (visual-fill-column-mode 1))
 
 (use-package org
+  :init
+  (setq org-agenda-files (flatten-list
+                          (list (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$")
+                                (directory-files-recursively "~/Documents/Org/Development/" "\\.org$"))))
   :after evil
   :hook
   (org-mode . efs/org-mode-setup)
@@ -915,9 +941,6 @@ Stole from aweshell"
   (setq org-refile-use-outline-path t)
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-agenda-skip-deadline-if-done t)
-  (setq org-agenda-files (flatten-list
-                          (list (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$")
-                                (directory-files-recursively "~/Documents/Org/Development/" "\\.org$"))))
   (setq org-agenda-align-tags-to-column 90)
   (setq org-agenda-prefix-format
       '((agenda . " %i %?-12t% s")
@@ -1038,6 +1061,7 @@ Stole from aweshell"
   (org-mem-updater-mode)
   (org-node-cache-mode)
   (org-node-backlink-mode)
+  (setq org-node-alter-candidates t)
   (setq org-node-ask-directory t)
   (setq org-node-extra-id-dirs
     '("~/Documents/Org/"))
