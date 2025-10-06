@@ -1,13 +1,18 @@
 #!/bin/bash
 
 sudo pacman -Syu
-sudo pacman -Sy docker podman podman-compose docker-compose \
-       git cmake cpio meson \
+sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
+       git cmake cpio meson pkg-config make \
        foot syncthing swww swappy waybar swaync wofi adw-gtk-theme gnome-keyring \
-       emacs \
+       emacs-wayland \
+       man-db \
        hypridle hyprlock \
        vivaldi firefox \
        distrobox \
+       virt-manager dnsmasq vde2 bridge-utils openbsd-netcat \
+       niri xwayland-satellite \
+       snapper snap-pac \
+       pipewire wireplumber pipewire-pulse \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
        geary loupe gnome-maps nautilus sushi papers gnome-weather gnome-font-viewer mission-center gnome-boxes \
        telegram-desktop \
@@ -36,6 +41,17 @@ fi
 
 ~/.local/bin/daily-install
 
+sudo systemctl enable --now libvirtd.service
+sudo systemctl enable --now docker.service
+
+sudo usermod -aG docker templarrr
+sudo usermod -aG games templarrr
+sudo usermod -aG audio templarrr
+sudo usermod -aG video templarrr
+sudo usermod -aG wheel templarrr
+sudo usermod -aG libvirt templarrr
+sudo usermod -aG libvirt-qemu templarrr
+
 systemctl --user enable syncthing.service
 systemctl --user start syncthing.service
 
@@ -47,6 +63,4 @@ git config --global user.name "Artem Smushkov"
 
 sudo pacman -R kitty chezmoi
 
-hyprpm update
-hyprpm add https://github.com/hyprwm/hyprland-plugins
-hyprpm enable hyprscrolling
+sudo snapper -c root create-config /
