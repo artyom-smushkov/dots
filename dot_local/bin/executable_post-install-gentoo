@@ -1,0 +1,92 @@
+#!/bin/bash
+
+set -ouex pipefail
+
+sudo emerge -av app-portage/eix eselect/eselect-repository app-portage/euses app-portage/gentoolkit
+sudo eselect repository enable guru
+sudo eselect repository enable steam-overlay
+
+sudo eix-sync
+
+sudo USE="-smartcard" bash -c 'emerge -1av app-emulation/qemu app-emulation/spice'
+
+sudo emerge -av dev-lang/rust-bin:1.89.0 sys-devel/gcc:15
+sudo eselect gcc set x86_64-pc-linux-gnu-15
+sudo eselect rust set rust-bin-1.89.0
+sudo emerge -av \
+     app-containers/docker app-containers/docker-compose app-containers/docker-buildx \
+     app-containers/podman app-containers/podman-compose \
+     app-containers/distrobox sys-apps/flatpak sys-fs/fuse:0 \
+     dev-vcs/git \
+     sys-apps/usbutils \
+     x11-libs/libnotify \
+     gui-apps/foot \
+     gui-apps/swww gui-apps/swaync \
+     gui-apps/fuzzel gui-apps/waybar \
+     gui-apps/grim gui-apps/slurp gui-apps/swappy gui-apps/wl-clipboard \
+     x11-themes/adw-gtk3 \
+     gnome-base/gnome-keyring \
+     net-p2p/syncthing \
+     app-editors/emacs \
+     x11-misc/sddm \
+     gui-wm/hyprland gui-apps/hypridle gui-apps/hyprlock \
+     sys-apps/xdg-desktop-portal-gtk gui-libs/xdg-desktop-portal-hyprland \
+     www-client/vivaldi www-client/firefox \
+     app-backup/snapper \
+     media-sound/helvum \
+     app-arch/file-roller gnome-base/nautilus app-text/papers \
+     sys-apps/mission-center media-gfx/loupe gnome-extra/gnome-boxes \
+     net-im/telegram-desktop net-im/slack main-client/geary \
+     media-gfx/darktable media-sound/reaper-bin media-sound/ardour media-sound/easyeffects \
+     media-video/mpv net-misc/turbovnc \
+     games-util/steam-launcher \
+     net-vpn/proton-vpn-gtk-app \
+     net-misc/anydesk 
+
+flatpak override --user --filesystem=~/.themes/
+flatpak override --user --filesystem=~/.icons/
+flatpak override --user --filesystem=xdg-config/gtk-4.0
+flatpak override --user --filesystem=xdg-config/gtk-3.0
+
+read -p "Was this a clean installation? (y/n): " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # distrobox assemble create --file .config/distrobox/assemble.ini
+    
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    git clone https://artyom-smushkov:${GITHUB_PASSWORD}@github.com/artyom-smushkov/piiq-dev.git /home/templarrr/Development/piiq-dev-containers
+    
+    until read -s -p "Bitbucket password: " BITBUCKET_PASSWORD && git clone https://artyom_smushkov:${BITBUCKET_PASSWORD}@bitbucket.org/piiqmedia/piiq-media.git /home/templarrr/Development/piiq-src
+    do
+        echo "Git clone failed, likely invalid password, try again"
+    done
+fi
+
+sudo usermod -aG docker templarrr
+sudo usermod -aG audio templarrr
+sudo usermod -aG video templarrr
+sudo usermod -aG libvirt templarrr
+sudo usermod -aG qemu templarrr
+sudo usermod -aG plugdev templarrr
+sudo usermod -aG flatpak templarrr
+
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+~/.local/bin/daily-install
+
+sudo ln -s /etc/init.d/user /etc/init.d/user.templarrr
+sudo rc-update add user.templarrr
+rc-update --user add syncthing
+rc-update --user add pipewire
+rc-update --user add pipewire-pulse
+rc-update --user add wireplumber
+sudo rc-update add libvirtd
+sudo rc-update add display-manager default
+
+xdg-mime default app.zen_browser.zen.desktop x-scheme-handler/https
+xdg-mime default app.zen_browser.zen.desktop x-scheme-handler/http
+
+git config --global user.email "artyom.smushkov@gmail.com"
+git config --global user.name "Artem Smushkov"
+
+sudo snapper -c root create-config /
