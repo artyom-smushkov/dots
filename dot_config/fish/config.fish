@@ -6,4 +6,3 @@ starship init fish | source
 set -g fish_greeting
 fish_config theme choose "Catppuccin Mocha"
 set -e fish_title
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

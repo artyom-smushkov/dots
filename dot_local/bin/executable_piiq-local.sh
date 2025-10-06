@@ -30,21 +30,21 @@ if ! tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
         sleep 1
     fi
 
-    tmux send-keys -t "$SESSION_NAME:0" "docker exec -it piiq /home/linuxbrew/.linuxbrew/bin/fish" Enter
+    tmux send-keys -t "$SESSION_NAME:0" "docker exec -it piiq /usr/bin/fish" Enter
     tmux rename-window -t "$SESSION_NAME:0" " shell"
 
     tmux new-window -t "$SESSION_NAME" -n " runserver"
-    tmux send-keys -t "$SESSION_NAME:1" "docker exec -it piiq /home/linuxbrew/.linuxbrew/bin/fish" Enter
+    tmux send-keys -t "$SESSION_NAME:1" "docker exec -it piiq /usr/bin/fish" Enter
     sleep 0.05
     tmux send-keys -t "$SESSION_NAME:1" "python app/manage.py runserver 0.0.0.0:8000" Enter
 
     tmux new-window -t "$SESSION_NAME" -n " taskmanager"
-    tmux send-keys -t "$SESSION_NAME:2" "docker exec -it piiq /home/linuxbrew/.linuxbrew/bin/fish" Enter
+    tmux send-keys -t "$SESSION_NAME:2" "docker exec -it piiq /usr/bin/fish" Enter
     sleep 0.05
     tmux send-keys -t "$SESSION_NAME:2" "python app/manage.py start_task_manager 10 --single-process" Enter
 
     tmux new-window -t "$SESSION_NAME" -n " frontend"
-    tmux send-keys -t "$SESSION_NAME:3" "docker exec -it piiq /home/linuxbrew/.linuxbrew/bin/fish" Enter
+    tmux send-keys -t "$SESSION_NAME:3" "docker exec -it piiq /usr/bin/fish" Enter
     sleep 0.05
     tmux send-keys -t "$SESSION_NAME:3" "cd app/frontend" Enter
     sleep 0.05
