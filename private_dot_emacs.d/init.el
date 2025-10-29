@@ -61,11 +61,25 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-center-content t)
+  (setq dashboard-vertically-center-content t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-icon-type 'all-the-icons))
+
 (use-package all-the-icons
   :if (display-graphic-p))
 
 (use-package all-the-icons-dired
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+
+(use-package all-the-icons-completion
+  :after marginalia
+  :hook
+  (marginalia-mode . all-the-icons-completion-marginalia-setup))
 
 (use-package dired
   :straight nil
@@ -373,6 +387,90 @@
 
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
+(defun my-py-hl-filter-self (node)
+  (not (equal (treesit-node-text node) "self")))
+
+(defface my-font-lock-argument-face
+  '((default :foreground "#fab387"))
+  "Face for argument")
+
+(defface my-font-lock-splat-face
+  '((default :foreground "#f38ba8"))
+  "Face for python splats")
+
+(custom-set-faces
+ '(font-lock-property-use-face ((t (:foreground "#94e2d5")))))
+
+(defun my-python-update-highlights ()
+  (unless (member 'custom (nth 2 treesit-font-lock-feature-list))
+    (push 'custom (nth 2 treesit-font-lock-feature-list)))
+  (setq-local treesit-font-lock-settings
+        (append python--treesit-settings
+                (treesit-font-lock-rules
+
+                 :language 'python
+                 :override 't
+                 :feature 'custom
+                 '(((identifier) @font-lock-type-face
+                    (:match "^[A-Z][A-Z_0-9a-z]*$" @font-lock-type-face)))
+
+                 :language 'python
+                 :override 't
+                 :feature 'custom
+                 '(((identifier) @font-lock-constant-face
+                    (:match "^_?[A-Z][A-Z_0-9]*$" @font-lock-constant-face)))
+
+                 :language 'python
+                 :override 't
+                 :feature 'custom
+                 '((keyword_argument name: (identifier) @my-font-lock-argument-face))
+
+                 :language 'python
+                 :override 't
+                 :feature 'custom
+                 '(((parameters (identifier) @my-font-lock-argument-face
+                     (:pred my-py-hl-filter-self @my-font-lock-argument-face)))
+
+                   (parameters (typed_parameter (identifier) @my-font-lock-argument-face))
+                   (parameters (default_parameter name: (identifier) @my-font-lock-argument-face))
+                   (parameters (typed_default_parameter name: (identifier) @my-font-lock-argument-face))
+
+                   (parameters
+                    (list_splat_pattern ; *args
+                     (identifier) @my-font-lock-argument-face))
+                   (parameters
+                    (dictionary_splat_pattern ; **kwargs
+                     (identifier) @my-font-lock-argument-face))
+
+                   (lambda_parameters
+                    (identifier) @my-font-lock-argument-face))
+
+                 :language 'python
+                 :override t
+                 :feature 'custom
+                 '((argument_list (identifier) @my-font-lock-argument-face)
+                   (argument_list
+                    (list_splat         ; *args
+                     (identifier) @my-font-lock-argument-face))
+                   (argument_list
+                    (dictionary_splat   ; **kwargs
+                     (identifier) @my-font-lock-argument-face)))
+
+                 :language 'python
+                 :override 't
+                 :feature 'custom
+                 '((list_splat_pattern "*" @my-font-lock-splat-face)
+                   (list_splat "*" @my-font-lock-splat-face)
+                   (dictionary_splat_pattern "**" @my-font-lock-splat-face)
+                   (dictionary_splat "**" @my-font-lock-splat-face)))))
+
+  (treesit-font-lock-recompute-features)
+  (font-lock-flush)
+  (font-lock-ensure))
+
+(use-package python
+  :hook (python-ts-mode . my-python-update-highlights))
+
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
@@ -380,17 +478,23 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+;; (use-package tree-sitter
+;;   :hook
+;;   ;; (python-mode . tree-sitter-hl-mode)
+;;   (javascript-mode . tree-sitter-hl-mode)
+;;   (dockerfile-mode . tree-sitter-hl-mode)
+;;   (rust-mode . tree-sitter-hl-mode)
+;;   (lua-mode . tree-sitter-hl-mode)
+;;   (sh-mode . tree-sitter-hl-mode)
+;;    :config
+;;   (global-tree-sitter-mode))
+;; (use-package tree-sitter-langs)
+
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-;; (use-package highlight-indent-guides
-;;   :hook
-;;   (prog-mode . highlight-indent-guides-mode)
-;;   :custom
-;;   (highlight-indent-guides-auto-character-face-perc 80)
-;;   (highlight-indent-guides-method 'character))
-
 (use-package indent-bars
+  ;; :after tree-sitter
   :custom
   (indent-bars-no-descend-lists t)
   (indent-bars-treesit-support t)
@@ -398,9 +502,14 @@
   (indent-bars-treesit-scope '((python function_definition class_definition for_statement
                                        if_statement with_statement while_statement)))
   :hook
-  (prog-mode . (lambda ()
-                 (unless (derived-mode-p 'tsx-ts-mode)
-                   (indent-bars-mode)))))
+  ;; (python-mode . indent-bars-mode)
+  (python-mode . (lambda () (tree-sitter-hl-mode) (indent-bars-mode)))
+  (javascript-mode . indent-bars-mode)
+  (python-ts-mode . indent-bars-mode)
+  (dockerfile-mode . indent-bars-mode)
+  (rust-mode . indent-bars-mode)
+  (lua-mode . indent-bars-mode)
+  (sh-mode . indent-bars-mode))
 
 (use-package autopair
   :hook
@@ -429,7 +538,8 @@
        ))
 
   :hook
-  ((python-ts-mode) . eglot-ensure))
+  ((python-ts-mode) . eglot-ensure)
+  ((python-mode) . eglot-ensure))
 
 (use-package eldoc-box)
 
@@ -496,6 +606,8 @@
   (web-mode . eglot-ensure)
   :mode "\\.vue\\'")
 
+(use-package portage-modes)
+(use-package ebuild-mode)
 (use-package dockerfile-mode)
 (use-package docker-compose-mode)
 (use-package zig-mode)
@@ -926,8 +1038,7 @@ Stole from aweshell"
 (use-package org
   :init
   (setq org-agenda-files (flatten-list
-                          (list (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$")
-                                (directory-files-recursively "~/Documents/Org/Development/" "\\.org$"))))
+                          (list (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
   :after evil
   :hook
   (org-mode . efs/org-mode-setup)
