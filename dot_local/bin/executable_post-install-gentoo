@@ -31,7 +31,7 @@ sudo emerge -av \
      x11-misc/sddm \
      gui-wm/hyprland gui-apps/hypridle gui-apps/hyprlock \
      sys-apps/xdg-desktop-portal-gtk gui-libs/xdg-desktop-portal-hyprland \
-     www-client/vivaldi www-client/firefox \
+     www-client/vivaldi \
      app-backup/snapper \
      media-sound/helvum \
      app-arch/file-roller gnome-base/nautilus app-text/papers \
