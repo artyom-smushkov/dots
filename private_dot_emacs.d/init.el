@@ -390,6 +390,10 @@
 (defun my-py-hl-filter-self (node)
   (not (equal (treesit-node-text node) "self")))
 
+(defface my-font-lock-constant-identifier-face
+  '((default :foreground "#74c7ec"))
+  "Face for argument")
+
 (defface my-font-lock-argument-face
   '((default :foreground "#fab387"))
   "Face for argument")
@@ -417,8 +421,8 @@
                  :language 'python
                  :override 't
                  :feature 'custom
-                 '(((identifier) @font-lock-constant-face
-                    (:match "^_?[A-Z][A-Z_0-9]*$" @font-lock-constant-face)))
+                 '(((identifier) @my-font-lock-constant-identifier-face
+                    (:match "^_?[A-Z][A-Z_0-9]*$" @my-font-lock-constant-identifier-face)))
 
                  :language 'python
                  :override 't
