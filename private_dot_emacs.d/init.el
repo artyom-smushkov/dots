@@ -1042,7 +1042,9 @@ Stole from aweshell"
 (use-package org
   :init
   (setq org-agenda-files (flatten-list
-                          (list (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
+                          (list
+                           (directory-files-recursively "~/Documents/Org/Development/" "\\.org$")
+                           (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
   :after evil
   :hook
   (org-mode . efs/org-mode-setup)
