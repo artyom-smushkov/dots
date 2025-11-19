@@ -406,6 +406,7 @@
  '(font-lock-property-use-face ((t (:foreground "#94e2d5")))))
 
 (defun my-python-update-highlights ()
+  (setq treesit-font-lock-level 4)
   (unless (member 'custom (nth 2 treesit-font-lock-feature-list))
     (push 'custom (nth 2 treesit-font-lock-feature-list)))
   (setq-local treesit-font-lock-settings
