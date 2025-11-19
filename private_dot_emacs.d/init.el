@@ -1040,16 +1040,15 @@ Stole from aweshell"
   (visual-fill-column-mode 1))
 
 (use-package org
-  :init
-  (setq org-agenda-files (flatten-list
-                          (list
-                           (directory-files-recursively "~/Documents/Org/Development/" "\\.org$")
-                           (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
   :after evil
   :hook
   (org-mode . efs/org-mode-setup)
   ;; (org-mode . (lambda () (company-mode -1)))
   :config
+  (setq org-agenda-files (flatten-list
+                          (list
+                           (directory-files-recursively "~/Documents/Org/Development/" "\\.org$")
+                           (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
   (setq org-ellipsis " ▾")
   (setq org-refile-targets '((nil . (:maxlevel 4))))
   (setq org-goto-interface 'outline-path-completion)
