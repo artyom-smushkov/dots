@@ -3,6 +3,9 @@
 (when (file-exists-p "~/.emacs.d/secrets.el")
   (load "~/.emacs.d/secrets.el"))
 
+(setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.cargo/bin")))
+(setq exec-path (append exec-path (list (expand-file-name "~/.cargo/bin"))))
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -405,7 +408,7 @@
   "Face for argument")
 
 (defface my-font-lock-argument-face
-  '((default :foreground "#fab387"))
+  '((default :foreground "#f5c2e7"))
   "Face for argument")
 
 (defface my-font-lock-splat-face
@@ -553,6 +556,7 @@
        ))
 
   :hook
+  ((rust-ts-mode) . eglot-ensure)
   ((python-ts-mode) . eglot-ensure)
   ((python-mode) . eglot-ensure))
 
@@ -641,7 +645,7 @@
   :custom
   (corfu-cycle t)
   (corfu-auto t)
-  (corfu-auto-delay 0.3)
+  (corfu-auto-delay 0.1)
   (corfu-auto-prefix 2)
   (corfu-popupinfo-mode))
 
@@ -722,13 +726,13 @@
    minuet-openai-fim-compatible-options
    :prompt
    (defun minuet-llama-cpp-fim-qwen-prompt-function (ctx)
-     (format "<|fim_prefix|>%s\n%s<|fim_suffix|>%s<|fim_middle|>"
+     (format "<|fim_prefix|>%s<|fim_suffix|>%s<|fim_middle|>"
              (plist-get ctx :language-and-tab)
              (plist-get ctx :before-cursor)
              (plist-get ctx :after-cursor)))
    :template)
 
-  (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 56))
+  (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 256))
 
 ;; Example configuration for Consult
 (use-package consult
@@ -984,10 +988,10 @@ Stole from aweshell"
      gptel-temperature 0.7
      gptel-model 'llamacpp
      gttel--system-message "Enable deep thinking subroutine"
-     gptel-backend (gptel-make-openai "llama-cpp"          ;Any name
-                     :stream t                             ;Stream responses
+     gptel-backend (gptel-make-openai "llama-cpp"
+                     :stream t
                      :protocol "http"
-                     :host "localhost:8080"                ;Llama.cpp server location
+                     :host "localhost:8081"
                      :models '(llamacpp))
      gptel-default-mode 'org-mode))
   ;; (setq gptel-api-key OPENAI_KEY)

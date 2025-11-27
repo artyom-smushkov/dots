@@ -6,3 +6,4 @@ starship init fish | source
 set -g fish_greeting
 fish_config theme choose "Catppuccin Mocha"
 set -e fish_title
+source "$HOME/.cargo/env.fish"
