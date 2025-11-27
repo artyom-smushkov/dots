@@ -34,7 +34,7 @@ sudo emerge -av \
      www-client/vivaldi \
      app-backup/snapper \
      media-sound/helvum \
-     app-arch/file-roller gnome-base/nautilus app-text/papers \
+     app-arch/file-roller xfce-base/thunar xfce-base/tumbler app-text/papers \
      sys-apps/mission-center media-gfx/loupe gnome-extra/gnome-boxes \
      net-im/telegram-desktop net-im/slack main-client/geary \
      media-gfx/darktable media-sound/reaper-bin media-sound/ardour media-sound/easyeffects \
