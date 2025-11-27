@@ -385,6 +385,16 @@
   :init
   (marginalia-mode))
 
+(use-package embark
+  :bind
+  (("C-." . embark-act)
+   ("C-l" . embark-export)
+   ("C-h B" . embark-bindings)))
+
+(use-package embark-consult
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
 (defun my-py-hl-filter-self (node)
