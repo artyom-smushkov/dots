@@ -37,7 +37,7 @@
       "tooltip": false
     },
     "clock#date": {
-      "format": "  {:%a %Y-%m-%d}",
+      "format": "  {:%d}",
       "tooltip": false
     },
     "cpu": {
