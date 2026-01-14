@@ -1,0 +1,15 @@
+new_tab shell
+cd $LOCAL_PATH
+launch docker exec -it piiq /usr/bin/fish
+
+new_tab runserver
+cd $LOCAL_PATH
+launch docker exec -it piiq /usr/bin/fish -c "python app/manage.py runserver 0.0.0.0:8000; exec /usr/bin/fish"
+
+new_tab taskmanager
+cd $LOCAL_PATH
+launch docker exec -it piiq /usr/bin/fish -c "python app/manage.py start_task_manager 10 --single-process; exec /usr/bin/fish"
+
+new_tab frontend
+cd $LOCAL_PATH
+launch docker exec -it piiq /usr/bin/fish -c "cd app/frontend && npm run watch; exec /usr/bin/fish"
