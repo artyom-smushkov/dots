@@ -1,12 +1,14 @@
 #!/bin/bash
 
+set -ouex pipefail
+
 sudo pacman -Syu
 sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        minikube kubectl \
        git cmake cpio meson pkg-config make \
        foot syncthing swww swappy waybar swaync fuzzel adw-gtk-theme gnome-keyring \
        emacs-wayland \
-       usb-utils \
+       usbutils \
        libnotify \
        man-db \
        htop btop eza dust duf procs neovim \
@@ -14,7 +16,7 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
        vivaldi \
        distrobox \
-       virt-manager dnsmasq vde2 bridge-utils openbsd-netcat \
+       virt-manager dnsmasq vde2 openbsd-netcat \
        niri xwayland-satellite \
        snapper snap-pac \
        pipewire wireplumber pipewire-pulse helvum \
