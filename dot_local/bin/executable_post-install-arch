@@ -15,7 +15,7 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        sddm hyprland hypridle hyprlock \
        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
        vivaldi \
-       distrobox \
+       distrobox flatpak \
        virt-manager dnsmasq vde2 openbsd-netcat \
        niri xwayland-satellite \
        snapper snap-pac \
@@ -25,7 +25,7 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        telegram-desktop \
        proton-vpn-gtk-app \
        darktable reaper ardour guitarix easyeffects \
-       mpv tigervnc steam 
+       mpv tigervnc steam
 
 sudo pacman -S --needed base-devel
 git clone https://aur.archlinux.org/paru.git
