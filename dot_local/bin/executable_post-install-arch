@@ -17,7 +17,6 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        vivaldi \
        distrobox flatpak \
        virt-manager dnsmasq vde2 openbsd-netcat \
-       niri xwayland-satellite \
        snapper snap-pac \
        pipewire wireplumber pipewire-pulse helvum \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
