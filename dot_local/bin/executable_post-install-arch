@@ -25,6 +25,13 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        darktable reaper ardour guitarix easyeffects \
        mpv tigervnc steam 
 
+sudo pacman -S --needed base-devel
+git clone https://aur.archlinux.org/paru.git
+cd paru
+sudo makepkg -si
+cd ..
+rm -rf paru
+
 sudo systemctl enable sddm.service
         
 flatpak override --user --filesystem=~/.themes/
