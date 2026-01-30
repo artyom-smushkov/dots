@@ -5,6 +5,7 @@ set -ouex pipefail
 sudo emerge -av app-portage/eix eselect/eselect-repository app-portage/euses app-portage/gentoolkit
 sudo eselect repository enable guru
 sudo eselect repository enable steam-overlay
+sudo eselect repository enable XaetaCore
 
 sudo eix-sync
 
@@ -35,12 +36,13 @@ sudo emerge -av \
      app-backup/snapper \
      media-sound/helvum \
      app-arch/file-roller xfce-base/thunar xfce-base/tumbler app-text/papers \
-     sys-apps/mission-center media-gfx/loupe gnome-extra/gnome-boxes \
+     media-gfx/loupe gnome-extra/gnome-boxes \
      net-im/telegram-desktop net-im/slack main-client/geary \
      media-gfx/darktable media-sound/reaper-bin media-sound/ardour media-sound/easyeffects \
      media-video/mpv net-misc/turbovnc \
      games-util/steam-launcher \
      net-vpn/proton-vpn-gtk-app \
+     net-vpn/proton-pass-bin \
      net-misc/anydesk 
 
 flatpak override --user --filesystem=~/.themes/
