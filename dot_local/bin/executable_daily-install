@@ -1,11 +1,9 @@
 #!/bin/bash
 
 DESIRED_FLATPAKS_PROGRAMS=$(
-echo "me.proton.Pass
-com.rafaelmardojai.Blanket
+echo "com.rafaelmardojai.Blanket
 it.mijorus.gearlever
 io.github.flattool.Warehouse
-com.anydesk.Anydesk
 app.zen_browser.zen
 com.saivert.pwvucontrol
 com.github.tchx84.Flatseal"
