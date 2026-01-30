@@ -50,20 +50,6 @@ flatpak override --user --filesystem=~/.icons/
 flatpak override --user --filesystem=xdg-config/gtk-4.0
 flatpak override --user --filesystem=xdg-config/gtk-3.0
 
-read -p "Was this a clean installation? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # distrobox assemble create --file .config/distrobox/assemble.ini
-    
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    
-    git clone https://artyom-smushkov:${GITHUB_PASSWORD}@github.com/artyom-smushkov/piiq-dev.git /home/templarrr/Development/piiq-dev-containers
-    
-    until read -s -p "Bitbucket password: " BITBUCKET_PASSWORD && git clone https://artyom_smushkov:${BITBUCKET_PASSWORD}@bitbucket.org/piiqmedia/piiq-media.git /home/templarrr/Development/piiq-src
-    do
-        echo "Git clone failed, likely invalid password, try again"
-    done
-fi
 
 sudo usermod -aG docker templarrr
 sudo usermod -aG audio templarrr
