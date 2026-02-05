@@ -2,27 +2,10 @@
 SESSION_NAME="shallow-research"
 LOCAL_PATH="/home/templarrr/Development/shallow-research/"
 
-if ! tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-    tmux new-session -d -s "$SESSION_NAME"
-    cd "$LOCAL_PATH"
-    is_running=$(docker compose -f docker-compose-dev.yml ps | grep up)
-    if [ -z "$is_running" ]; then
-        docker compose -f docker-compose-dev.yml up -d --build
-    fi
-
-    tmux send-keys -t "$SESSION_NAME:0" "docker exec -it shallow_research_dev /bin/fish" enter
-    tmux rename-window -t "$SESSION_NAME:0" " shell"
-
-    tmux new-window -t "$SESSION_NAME" -n " server"
-    tmux send-keys -t "$SESSION_NAME:1" "docker exec -it shallow_research_dev /bin/fish" enter
-    sleep 0.05
-    tmux send-keys -t "$SESSION_NAME:1" "python src/shallow-research.py" enter
-
-    tmux select-window -t "$SESSION_NAME:0"
+cd "$LOCAL_PATH"
+COMPOSE_IS_RUNNING=$(docker compose -f docker-compose-dev.yml ps --format json 2>/dev/null | grep -q '"State":"running"' && echo "yes")
+if [ -z $COMPOSE_IS_RUNNING ]; then
+    docker compose -f docker-compose-dev.yml up -d --build
 fi
 
-if [ -n $TMUX ]; then
-    tmux switch-client -t "$SESSION_NAME"
-else
-    tmux attach -t "$SESSION_NAME"
-fi
+wezterm --config-file ~/.config/wezterm/workspaces/shallow-research.lua start --always-new-process & disown
