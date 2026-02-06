@@ -12,4 +12,4 @@ if [ -z $MINIKUBE_IS_RUNNING ]; then
     minikube start --cpus=4 --memory=8192
 fi
 
-wezterm --config-file ~/.config/wezterm/workspaces/crypto-nonsence.lua start --always-new-process & disown
+wezterm --config-file ~/.config/wezterm/workspaces/crypto-nonsence.lua start --always-new-process &2>1 & disown

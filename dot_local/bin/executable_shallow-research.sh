@@ -8,4 +8,4 @@ if [ -z $COMPOSE_IS_RUNNING ]; then
     docker compose -f docker-compose-dev.yml up -d --build
 fi
 
-wezterm --config-file ~/.config/wezterm/workspaces/shallow-research.lua start --always-new-process & disown
+wezterm --config-file ~/.config/wezterm/workspaces/shallow-research.lua start --always-new-process &2>1 & disown
