@@ -11,7 +11,7 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        usbutils \
        libnotify \
        man-db \
-       htop btop eza dust duf procs neovim tmux \
+       fish htop btop eza dust duf procs neovim tmux \
        sddm hyprland hypridle hyprlock \
        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
        vivaldi \
