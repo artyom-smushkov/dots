@@ -489,6 +489,7 @@
 (use-package python
   :hook (python-ts-mode . my-python-update-highlights))
 
+(setopt treesit-font-lock-level 4)
 (use-package treesit-auto
   :custom
   (treesit-auto-install 'prompt)
