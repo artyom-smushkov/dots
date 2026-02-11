@@ -489,6 +489,14 @@
 (use-package python
   :hook (python-ts-mode . my-python-update-highlights))
 
+(use-package uv-mode
+  :hook (python-ts-mode . uv-mode-auto-activate-hook))
+
+(use-package terraform-mode
+  :custom (terraform-indent-level 4)
+  :hook
+  ('terraform-mode . outline-minor-mode))
+
 (setopt treesit-font-lock-level 4)
 (use-package treesit-auto
   :custom
@@ -550,9 +558,6 @@
      eglot-workspace-configuration
      '(:basedpyright (
          :typeCheckingMode "basic"
-       )
-       :python (
-         :pythonPath "/usr/local/bin/python3"
        )
        ))
 
