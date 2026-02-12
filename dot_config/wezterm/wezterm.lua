@@ -12,7 +12,7 @@ config.window_background_opacity = 0.93
 
 config.tab_bar_at_bottom = true
 config.use_fancy_tab_bar = false
-config.tab_max_width = 20
+config.tab_max_width = 40
 
 wezterm.on('update-status', function(window, pane)
   local workspace = pane.workspace or config.default_workspace
