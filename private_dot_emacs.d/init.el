@@ -27,7 +27,7 @@
 (use-package straight
 :custom
 ;; add project and flymake to the pseudo-packages variable so straight.el doesn't download a separate version than what eglot downloads.
-(straight-built-in-pseudo-packages '(emacs nadvice python eglot image-mode project flymake)))
+(straight-built-in-pseudo-packages '(emacs nadvice python image-mode project eglot flymake)))
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -630,6 +630,11 @@
   :hook
   (web-mode . eglot-ensure)
   :mode "\\.vue\\'")
+
+(use-package terraform-mode
+  :custom (terraform-indent-level 4)
+  :hook
+  (terraform-mode . (lambda () (outline-minor-mode 1))))
 
 (use-package portage-modes)
 (use-package ebuild-mode)
