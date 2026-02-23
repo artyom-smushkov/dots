@@ -4,16 +4,21 @@ set -ouex pipefail
 
 sudo pacman -Syu
 sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
-       minikube kubectl \
+       minikube kubectl aws-cli-v2 terraform \
        git cmake cpio meson pkg-config make \
-       foot syncthing swww swappy waybar swaync fuzzel adw-gtk-theme gnome-keyring \
+       sudo chrony sof-firmware btrfs-progs dosfstools fuse2 fuse3 ntfs-3g \
+       borg borgmatic \
+       kitty foot syncthing awww swappy waybar swaync fuzzel adw-gtk-theme gnome-keyring \
        emacs-wayland \
-       usbutils \
+       tree-sitter cloc openai-codex opencode \
+       uv typescript typescript-language-server nodejs \
+       usbutils dfu-programmer \
        libnotify \
        man-db \
-       fish htop btop eza dust duf procs neovim tmux \
-       sddm hyprland hypridle hyprlock \
-       brightnessctl \
+       yt-dlp \
+       fish htop btop nvtop eza dust duf procs neovim tmux jq fzf starship fd ripgrep \
+       sddm hyprland hypridle hyprlock brightnessctl \
+       niri nautilus xdg-desktop-portal-gnome xwayland-satellite \
        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
        vivaldi \
        distrobox flatpak \
@@ -21,7 +26,7 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        snapper snap-pac \
        pipewire wireplumber pipewire-pulse helvum \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
-       geary loupe gnome-maps thunar tumbler papers gnome-weather gnome-font-viewer gnome-boxes \
+       geary loupe gnome-maps thunar thunar-volman tumbler papers gnome-weather gnome-font-viewer gnome-boxes \
        telegram-desktop \
        proton-vpn-gtk-app \
        darktable reaper ardour guitarix easyeffects \
@@ -34,6 +39,11 @@ makepkg -si
 cd ..
 rm -rf paru
 
+paru -S wezterm-nightly-bin
+paru -S anydesk-bin
+paru -S proton-pass-bin
+paru -S mistral-vibe
+
 sudo systemctl enable sddm.service
         
 flatpak override --user --filesystem=~/.themes/
@@ -45,6 +55,7 @@ flatpak override --user --filesystem=xdg-config/gtk-3.0
 
 sudo systemctl enable --now libvirtd.service
 sudo systemctl enable --now docker.service
+sudo systemctl enable --now chrony.service
 
 sudo usermod -aG docker templarrr
 sudo usermod -aG games templarrr
