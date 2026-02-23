@@ -3,6 +3,9 @@
 (when (file-exists-p "~/.emacs.d/secrets.el")
   (load "~/.emacs.d/secrets.el"))
 
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+
 (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.cargo/bin")))
 (setq exec-path (append exec-path (list (expand-file-name "~/.cargo/bin"))))
 
@@ -1071,10 +1074,12 @@ Stole from aweshell"
   (org-mode . efs/org-mode-setup)
   ;; (org-mode . (lambda () (company-mode -1)))
   :config
-  (setq org-agenda-files (flatten-list
-                          (list
-                           (directory-files-recursively "~/Documents/Org/Development/" "\\.org$")
-                           (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
+  (setopt
+   org-agenda-files (flatten-list
+     (list
+          (directory-files-recursively "~/Documents/Org/Development/" "\\.org$")
+          (directory-files-recursively "~/Documents/Org/Journal/" "\\.org$")
+          (directory-files-recursively "~/Documents/Org/Tasks/" "\\.org$"))))
   (setq org-ellipsis " ▾")
   (setq org-refile-targets '((nil . (:maxlevel 4))))
   (setq org-goto-interface 'outline-path-completion)
@@ -1214,5 +1219,3 @@ Stole from aweshell"
 ;;   (setq gac-automatically-push-p t))
 
 (provide '.emacs)
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
