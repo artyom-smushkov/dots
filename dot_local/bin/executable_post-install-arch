@@ -26,10 +26,10 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        snapper snap-pac \
        pipewire wireplumber pipewire-pulse helvum \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
-       geary loupe gnome-maps thunar thunar-volman tumbler papers gnome-weather gnome-font-viewer gnome-boxes \
+       geary loupe gnome-maps thunar thunar-volman tumbler papers gnome-weather gnome-font-viewer gnome-boxes lollypop \
        telegram-desktop \
        proton-vpn-gtk-app \
-       darktable reaper ardour guitarix easyeffects \
+       darktable reaper ardour guitarix easyeffects lsp-plugins \
        mpv tigervnc steam
 
 sudo pacman -S --needed base-devel
