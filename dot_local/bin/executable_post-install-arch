@@ -8,7 +8,7 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        git cmake cpio meson pkg-config make \
        sudo chrony sof-firmware btrfs-progs dosfstools fuse2 fuse3 ntfs-3g \
        borg borgmatic \
-       kitty foot syncthing awww swappy waybar swaync fuzzel adw-gtk-theme gnome-keyring \
+       kitty foot syncthing swww swappy waybar swaync fuzzel adw-gtk-theme gnome-keyring \
        emacs-wayland \
        tree-sitter cloc openai-codex opencode \
        uv typescript typescript-language-server nodejs \
@@ -42,7 +42,6 @@ rm -rf paru
 paru -S wezterm-nightly-bin
 paru -S anydesk-bin
 paru -S proton-pass-bin
-paru -S mistral-vibe
 
 sudo systemctl enable sddm.service
         
