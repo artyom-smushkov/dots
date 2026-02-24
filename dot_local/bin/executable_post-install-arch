@@ -18,7 +18,6 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        yt-dlp \
        fish htop btop nvtop eza dust duf procs neovim tmux jq fzf starship fd ripgrep \
        sddm hyprland hypridle hyprlock brightnessctl \
-       niri nautilus xdg-desktop-portal-gnome xwayland-satellite \
        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
        vivaldi \
        distrobox flatpak \
