@@ -1,10 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
-(when (file-exists-p "~/.emacs.d/secrets.el")
-  (load "~/.emacs.d/secrets.el"))
-
 (setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+(when (file-exists-p "~/.emacs.d/secrets.el")
+  (load custom-file))
 
 (setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/.cargo/bin")))
 (setq exec-path (append exec-path (list (expand-file-name "~/.cargo/bin"))))
