@@ -294,10 +294,18 @@
   (setq make-backup-files nil)
   (setq eat-term-name "xterm-256color")
   (setq split-height-threshold nil)
-  (setq split-width-threshold 80)
+  (setq split-width-threshold 180)
   (setq help-window-select t)
   (setq redisplay-dont-pause t)
   (setq tags-completion-at-point-function nil)
+
+(setq display-buffer-alist
+      '(("\\*Embark Collect\\*"
+         (display-buffer-reuse-window display-buffer-same-window))
+        ("\\*compilation\\*"
+         (display-buffer-reuse-window display-buffer-same-window))
+        ("\\*grep\\*"
+         (display-buffer-reuse-window display-buffer-same-window))))
   
   (global-auto-revert-mode 1)
   (setq auto-revert-remote-files t))
