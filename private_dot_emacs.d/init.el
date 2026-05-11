@@ -1005,17 +1005,11 @@ Stole from aweshell"
 (use-package gptel
     :config
     (setq
-     ;; gptel--system-message "You are Mistral Small 3, a Large Language Model (LLM) created by Mistral AI, a French startup headquartered in Paris.
-;; Your knowledge base was last updated on 2023-10-01. The current date is 2025-01-30.
-;; When you're not sure about some information, you say that you don't have the information and don't make up anything.
-;; If the user's question is not clear, ambiguous, or does not provide enough context for you to accurately answer the question, you do not try to answer it right away and you rather ask the user to clarify their request (e.g. \"What are some good restaurants around me?\" => \"Where are you?\" or \"When is the next flight to Tokyo\" => \"Where do you travel from?\")"
-     gptel-temperature 0.7
      gptel-model 'llamacpp
-     gttel--system-message "Enable deep thinking subroutine"
      gptel-backend (gptel-make-openai "llama-cpp"
                      :stream t
                      :protocol "http"
-                     :host "localhost:8081"
+                     :host "localhost:8080"
                      :models '(llamacpp))
      gptel-default-mode 'org-mode))
   ;; (setq gptel-api-key OPENAI_KEY)
