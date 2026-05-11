@@ -628,6 +628,9 @@
    :config
    (add-hook 'after-init-hook #'global-flycheck-mode))
 
+(use-package flycheck-rust
+  :hook (flycheck-mode . flycheck-rust-setup))
+
 ;; (use-package flymake-jsts
 ;;   :straight '(flymake-jsts :type git :host github :repo "orzechowskid/flymake-jsts" :branch "main"))
 
