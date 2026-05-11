@@ -572,6 +572,7 @@
 
   :hook
   ((rust-ts-mode) . eglot-ensure)
+  ((typescript-ts-mode) . eglot-ensure)
   ((python-ts-mode) . eglot-ensure)
   ((python-mode) . eglot-ensure))
 
