@@ -728,9 +728,9 @@
    ;; ("C-<tab>" . #'minuet-accept-suggestion-line)
    ("M-e" . #'minuet-dismiss-suggestion))
 
-  :hook
-  (prog-mode . minuet-auto-suggestion-mode)
-  (minuet-active-mode-hook . evil-normalize-keymaps)
+  ;; :hook
+  ;; (prog-mode . minuet-auto-suggestion-mode)
+  ;; (minuet-active-mode-hook . evil-normalize-keymaps)
 
   :config
   (setq minuet-provider 'openai-fim-compatible)
