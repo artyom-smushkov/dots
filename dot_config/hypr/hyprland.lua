@@ -126,6 +126,8 @@ hl.bind("SUPER + SHIFT + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind("SUPER + SPACE", hl.dsp.layout("swapwithmaster"))
 hl.bind("SUPER + L", hl.dsp.layout("focus right"))
 hl.bind("SUPER + H", hl.dsp.layout("focus left"))
+hl.bind("SUPER + SHIFT + L", hl.dsp.layout("swapcol r"))
+hl.bind("SUPER + SHIFT + H", hl.dsp.layout("swapcol l"))
 hl.bind("SUPER + S", hl.dsp.layout("colresize +conf"))
 hl.bind("SUPER + T", hl.dsp.layout("orientationcycle center left"))
 
