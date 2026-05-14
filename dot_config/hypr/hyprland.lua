@@ -166,12 +166,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    name = "wezterm-workspace",
-    match = { class = "org.wezfurlong.wezterm" },
-    workspace = "3 silent",
-})
-
-hl.window_rule({
     name = "lm-studio-workspace",
     match = { class = "LM Studio" },
     workspace = "5 silent",
