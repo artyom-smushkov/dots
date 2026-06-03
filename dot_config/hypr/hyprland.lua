@@ -31,6 +31,7 @@ hl.config({
     },
     misc = {
         mouse_move_enables_dpms = true,
+        focus_on_activate = false,
         key_press_enables_dpms = false,
     },
     decoration = {
@@ -103,19 +104,19 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprctl setcursor Dracula-cursors 24")
     hl.exec_cmd("swww-daemon || awww-daemon")
     hl.exec_cmd("waybar")
+    -- hl.exec_cmd("qs -c noctalia-shell")
     hl.exec_cmd("swaync")
     hl.exec_cmd("bash -c '~/.local/bin/wallsetter'")
     hl.exec_cmd("hypridle")
-    hl.exec_cmd("geary")
+    hl.exec_cmd('mailspring --password-store="gnome-libsecret"')
     hl.exec_cmd("slack --disable-gpu")
-    hl.exec_cmd("flatpak run app.zen_browser.zen")
-    hl.exec_cmd("lollypop")
+    hl.exec_cmd("zen-browser")
     hl.exec_cmd("easyeffects")
     hl.exec_cmd("Telegram")
 end)
 
-hl.bind("Print", hl.dsp.exec_cmd("flatpak run be.alexandervanhee.gradia --screenshot=FULL"))
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("flatpak run be.alexandervanhee.gradia --screenshot=INTERACTIVE"))
+hl.bind("Print", hl.dsp.exec_cmd("gradia --screenshot=FULL"))
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("gradia --screenshot=INTERACTIVE"))
 hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("wezterm --config-file ~/.config/wezterm/workspaces/host.lua start"))
 hl.bind("SUPER + R", hl.dsp.exec_cmd("fuzzel"))
 hl.bind("SUPER + E", hl.dsp.exec_cmd("nautilus"))
@@ -135,6 +136,7 @@ for i = 1, 10 do
     local key = i % 10
     hl.bind("SUPER + " .. tostring(key), hl.dsp.focus({workspace = i}))
     hl.bind("SUPER + SHIFT + " .. tostring(key), hl.dsp.window.move({ workspace = i }))
+    hl.workspace_rule({ workspace = i, persistent = true })
 end
 
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true })
@@ -154,13 +156,7 @@ hl.window_rule({
 
 hl.window_rule({
     name = "geary-workspace-org",
-    match = { class = "org.gnome.Geary" },
-    workspace = "4 silent",
-})
-
-hl.window_rule({
-    name = "geary-workspace",
-    match = { class = "geary" },
+    match = { class = "Mailspring" },
     workspace = "4 silent",
     scrolling_width = "0.667",
 })
@@ -191,7 +187,7 @@ hl.window_rule({
 
 hl.window_rule({
     name = "easyeffects-workspace",
-    match = { class = "com.github.wwmm.easyeffects" },
+    match = { class = "org.kde.easyeffects" },
     workspace = "6 silent",
 })
 
