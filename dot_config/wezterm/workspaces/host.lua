@@ -7,7 +7,7 @@ config.default_workspace = "localhost"
 wezterm.on('gui-startup', function(cmd)
         local tab1, pane1, window = wezterm.mux.spawn_window {
             workspace = 'shallow-research',
-            args = { '/bin/fish' },
+            args = { '/bin/zsh' },
         }
         tab1:set_title('shell')
 end)

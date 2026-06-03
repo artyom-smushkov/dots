@@ -2,7 +2,7 @@ local wezterm = require 'wezterm'
 
 local config = wezterm.config_builder()
 
-config.default_prog = { '/usr/bin/fish' }
+config.default_prog = { '/usr/bin/zsh' }
 
 config.font = wezterm.font 'VictorMono Nerd Font'
 config.font_size = 11
