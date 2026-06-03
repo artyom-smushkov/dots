@@ -1224,8 +1224,27 @@ Stole from aweshell"
     '("~/Documents/Org/"))
   (setq org-node-backlink-aggressive t))
 
-;; (use-package git-auto-commit-mode
-;;   :init
-;;   (setq gac-automatically-push-p t))
+(use-package org-fc
+  :after evil
+  :straight
+  (org-fc
+   :type git :host nil :repo "https://git.sr.ht/~l3kn/org-fc"
+   :files (:defaults "awk" "demo.org"))
+  :custom
+  (org-fc-directories '("~/Documents/Org/"))
+  :config
+  (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-flip-mode
+    (kbd "RET") 'org-fc-review-flip
+    (kbd "n") 'org-fc-review-flip
+    (kbd "s") 'org-fc-review-suspend-card
+    (kbd "q") 'org-fc-review-quit)
+
+  (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-rate-mode
+    (kbd "a") 'org-fc-review-rate-again
+    (kbd "h") 'org-fc-review-rate-hard
+    (kbd "g") 'org-fc-review-rate-good
+    (kbd "e") 'org-fc-review-rate-easy
+    (kbd "s") 'org-fc-review-suspend-card
+    (kbd "q") 'org-fc-review-quit))
 
 (provide '.emacs)
