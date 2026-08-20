@@ -29,6 +29,9 @@ hl.config({
             natural_scroll = false,
         },
     },
+    cursor = {
+        no_warps = true,
+    },
     misc = {
         mouse_move_enables_dpms = true,
         focus_on_activate = false,
