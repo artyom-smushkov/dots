@@ -18,6 +18,7 @@ Item {
     readonly property int tooltipGap: 4
     readonly property bool tooltipVisible: tooltipText !== "" && hoverArea.containsMouse
     readonly property int tooltipExtraHeight: tooltipVisible ? tooltipBg.implicitHeight + tooltipGap : 0
+    readonly property int tooltipHeight: tooltipBg.implicitHeight + tooltipGap
 
     readonly property int borderWidth: 2
     property int paddingH: 10

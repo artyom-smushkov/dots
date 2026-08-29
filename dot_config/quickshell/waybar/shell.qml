@@ -11,9 +11,10 @@ PanelWindow {
     color: "transparent"
 
     readonly property int barHeight: Math.max(bar.implicitHeight, centerSection.implicitHeight)
+    readonly property int maxTooltipHeight: Math.max(cpuModule.tooltipHeight, memModule.tooltipHeight,
+                       diskModule.tooltipHeight, idleModule.tooltipHeight)
     exclusiveZone: barHeight
-    implicitHeight: barHeight + cpuModule.tooltipExtraHeight + memModule.tooltipExtraHeight
-                       + diskModule.tooltipExtraHeight + idleModule.tooltipExtraHeight
+    implicitHeight: barHeight + maxTooltipHeight
 
     RowLayout {
         id: bar
