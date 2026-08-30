@@ -46,7 +46,7 @@ ModuleBox {
 
     Item {
         id: labelItem
-        implicitWidth: bellText.implicitWidth + (dot.visible ? dot.implicitWidth : 0)
+        implicitWidth: bellText.implicitWidth
         implicitHeight: bellText.implicitHeight
 
         BarText {
