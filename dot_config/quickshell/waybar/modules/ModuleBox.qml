@@ -10,10 +10,12 @@ Item {
     property string tooltipText: ""
     property bool clickable: false
     property bool wheelable: false
+    property bool middleClickable: false
 
     signal clicked
-    signal wheelUp
-    signal wheelDown
+    signal wheelUp(real x)
+    signal wheelDown(real x)
+    signal middleClicked(real x)
 
     readonly property int tooltipGap: 4
     readonly property bool tooltipVisible: tooltipText !== "" && hoverArea.containsMouse
@@ -64,12 +66,14 @@ Item {
         id: hoverArea
         anchors.fill: parent
         hoverEnabled: root.tooltipText !== ""
-        enabled: root.tooltipText !== "" || root.clickable
-        onClicked: { if (root.clickable) root.clicked() }
+        enabled: root.tooltipText !== "" || root.clickable || root.middleClickable
+        acceptedButtons: Qt.AllButtons
+        onClicked: { if (root.clickable && mouse.button === Qt.LeftButton) root.clicked() }
+        onPressed: { if (root.middleClickable && mouse.button === Qt.MiddleButton) root.middleClicked(mouse.x) }
         onWheel: {
             if (root.wheelable) {
-                if (wheel.angleDelta.y > 0) root.wheelUp()
-                else if (wheel.angleDelta.y < 0) root.wheelDown()
+                if (wheel.angleDelta.y > 0) root.wheelUp(wheel.x)
+                else if (wheel.angleDelta.y < 0) root.wheelDown(wheel.x)
             }
         }
     }

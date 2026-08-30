@@ -6,6 +6,8 @@ ModuleBox {
     id: root
     color: "#74c7ec"
     clickable: true
+    wheelable: true
+    middleClickable: true
 
     readonly property var sink: Pipewire.defaultAudioSink
     readonly property var source: Pipewire.defaultAudioSource
@@ -19,13 +21,27 @@ ModuleBox {
 
     readonly property var sinkIcons: ["\uF026", "\uF027", "\uF028"]
 
-    function labelFor(sinkPct, sinkMuted, sourcePct, sourceMuted) {
-        const sourcePart = sourceMuted ? "\uF131" : "\uF130 " + sourcePct + "%"
-        if (sinkMuted) return "\uF6A9 " + sourcePart
-        return sinkIcons[Math.min(2, Math.floor(sinkPct / 33))] + " " + sinkPct + "%" + " " + sourcePart
+    readonly property string sinkText: sinkMuted
+        ? "\u{F075F} "
+        : sinkIcons[Math.min(2, Math.floor(sinkPct / 33))] + " " + sinkPct + "% "
+
+    readonly property string sourceText: sourceMuted
+        ? "\uF131"
+        : "\uF130 " + sourcePct + "%"
+
+    readonly property real inputBoundary: sinkLabel.mapToItem(root, sinkLabel.width, 0).x
+
+    function isInput(x) { return x >= inputBoundary }
+
+    function nudgeVolume(delta, target) {
+        if (target === null || target.audio === null) return
+        target.audio.volume = Math.max(0, Math.min(1, Math.round((target.audio.volume + delta) * 100) / 100))
     }
 
-    readonly property string label: labelFor(sinkPct, sinkMuted, sourcePct, sourceMuted)
+    function toggleMuted(target) {
+        if (target === null || target.audio === null) return
+        target.audio.muted = !target.audio.muted
+    }
 
     visible: sink !== null && sink.ready
 
@@ -40,9 +56,18 @@ ModuleBox {
     }
 
     onClicked: pavuProc.running = true
+    onWheelUp: nudgeVolume(0.05, isInput(x) ? source : sink)
+    onWheelDown: nudgeVolume(-0.05, isInput(x) ? source : sink)
+    onMiddleClicked: toggleMuted(isInput(x) ? source : sink)
 
     BarText {
+        id: sinkLabel
         color: root.color
-        text: root.label
+        text: root.sinkText
+    }
+    BarText {
+        id: sourceLabel
+        color: root.color
+        text: root.sourceText
     }
 }
