@@ -190,7 +190,7 @@ hl.window_rule({
 
 hl.window_rule({
     name = "easyeffects-workspace",
-    match = { class = "org.kde.easyeffects" },
+    match = { class = "com.github.wwmm.easyeffects" },
     workspace = "6 silent",
 })
 
