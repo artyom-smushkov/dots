@@ -17,10 +17,7 @@ Item {
     signal wheelDown(real x)
     signal middleClicked(real x)
 
-    readonly property int tooltipGap: 4
     readonly property bool tooltipVisible: tooltipText !== "" && hoverArea.containsMouse
-    readonly property int tooltipExtraHeight: tooltipVisible ? tooltipBg.implicitHeight + tooltipGap : 0
-    readonly property int tooltipHeight: tooltipBg.implicitHeight + tooltipGap
 
     readonly property int borderWidth: 2
     property int paddingH: 10
@@ -78,23 +75,4 @@ Item {
         }
     }
 
-    Rectangle {
-        id: tooltipBg
-        visible: root.tooltipVisible
-        color: Qt.rgba(30/255, 30/255, 46/255, 0.9)
-        border.color: "#74c7ec"
-        border.width: 1
-        anchors.top: parent.bottom
-        anchors.topMargin: root.tooltipGap
-        anchors.horizontalCenter: parent.horizontalCenter
-        implicitWidth: tooltipLabel.implicitWidth + 2 * (border.width + 8)
-        implicitHeight: tooltipLabel.implicitHeight + 2 * (border.width + 4)
-
-        BarText {
-            id: tooltipLabel
-            anchors.centerIn: parent
-            color: "#cdd6f4"
-            text: root.tooltipText
-        }
-    }
 }
