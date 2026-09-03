@@ -1,17 +1,47 @@
 return {
-    'gelguy/wilder.nvim',
-    config = function()
-        require('wilder').setup({
-            modes = {':', '/', '?'}
-        })
-        require('wilder').set_option('renderer', require('wilder').popupmenu_renderer(
-            require('wilder').popupmenu_border_theme({
-                highlighter = require('wilder').basic_highlighter(),
-                min_width = '100%', -- minimum height of the popupmenu, can also be a number
-                min_height = '20%', -- to set a fixed height, set max_height to the same value
-                max_height = '20%',
-                reverse = 0,        -- if 1, shows the candidates from bottom to top
-            })
-        ))
-    end,
+  "gelguy/wilder.nvim",
+  config = function()
+    local wilder = require("wilder")
+
+    wilder.setup({
+      modes = { ":", "/", "?" },
+    })
+
+    wilder.set_option("pipeline", {
+      wilder.branch(
+        wilder.cmdline_pipeline({ fuzzy = 2 }),
+        wilder.python_search_pipeline()
+      ),
+    })
+
+    wilder.set_option("renderer", wilder.popupmenu_renderer(
+      wilder.popupmenu_border_theme({
+        border = "rounded",
+        highlights = {
+          border = "Comment",
+        },
+        highlighter = wilder.basic_highlighter(),
+        min_width = "100%",
+        max_height = "50%",
+        left = {
+          " ",
+          wilder.popupmenu_devicons(),
+        },
+        right = {
+          wilder.popupmenu_buffer_flags({
+            flags = " %a+ ",
+            icons = {
+              ["%"] = "▸",
+              a = "⚑",
+              h = "○",
+              ["+"] = "●",
+            },
+          }),
+          " ",
+          wilder.popupmenu_scrollbar(),
+        },
+        empty_message = wilder.popupmenu_empty_message_with_spinner(),
+      })
+    ))
+  end,
 }

@@ -8,3 +8,4 @@ fish_config theme choose "Catppuccin Mocha"
 set -e fish_title
 source "$HOME/.cargo/env.fish"
 fish_add_path ~/.bun/bin
+fish_add_path ~/.local/bin

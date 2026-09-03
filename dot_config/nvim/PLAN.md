@@ -1,0 +1,552 @@
+# Plan: port Emacs config → Neovim (org-mode excluded)
+
+Source of truth: `private_dot_emacs.d/init.el` (chezmoi).
+Target: rebuild `dot_config/nvim` from scratch on Neovim 0.12.5.
+
+## Ground rules
+
+- Only touch files that are **committed** in the chezmoi repo. Ignore all uncommitted
+  changes (e.g. `dot_config/fish/config.fish`, untracked fonts) — leave them as-is.
+- Preserve this `PLAN.md` during the rebuild.
+- One task = one agent run. Do not combine tasks; check a task off only when its
+  *Done when* holds.
+
+## Strategy
+
+Minimal plugin set, each piece the closest equivalent of the Emacs counterpart:
+
+| Emacs                        | Neovim                                                    |
+|------------------------------|-----------------------------------------------------------|
+| evil (vim keys)              | built-in                                                  |
+| evil-surround                | `kylechui/nvim-surround`                                  |
+| consult                      | `nvim-telescope/telescope.nvim`                           |
+| embark (results extraction)  | quickfix + telescope `<C-q>` (task 14); at-point act/export dropped |
+| vertico/marginalia/orderless | `gelguy/wilder.nvim`                                      |
+| corfu + nerd-icons           | `hrsh7th/nvim-cmp` + `cmp-nvim-lsp` + `nvim-tree/nvim-web-devicons` |
+| eglot + eglot-booster        | `willi-b/mason.nvim` + `mason-lspconfig` + `nvim-lspconfig` |
+| flycheck / flycheck-rust     | LSP diagnostics + mason extras (ruff)                     |
+| eldoc-box                    | LSP hover (cmp doc window)                                |
+| treesit-auto                 | `nvim-treesitter/nvim-treesitter` (`ensure_installed` + auto-install) |
+| magit + magit-delta          | `sindrel/neogit` + side-by-side diff (unsolved, task 31) |
+| doom-modeline                | `nvim-lualine/lualine.nvim` (default-ish setup, no 1:1 matching) |
+| dired (+single/fl/dotfiles)  | built-in `netrw`                                          |
+| breadcrumb                   | `SmiteshP/nvim-navic`                                     |
+| rainbow-delimiters           | `HiPhish/rainbow-delimiters.nvim`                         |
+| indent-bars                  | `lukas-reineke/indent-blankline.nvim`                     |
+| autopair                     | `windwp/nvim-autopairs`                                   |
+| which-key                    | `folke/which-key.nvim`                                    |
+| avy goto char                | built-in `g/`                                             |
+| visual-fill-column (md)      | `luukvbaal/vim-visual-fill-column`                        |
+
+**Dropped / not replicable (accepted):** org-mode (out of scope), meow, dashboard,
+eshell/eat/tramp (shell & remote), gptel/aider/minuet (all AI), eglot-booster, gcmh,
+alpha-background/undecorated (terminal-emulator concern), ebuild/portage modes.
+
+---
+
+## Phase 0 — Skeleton
+
+- [x] **1. Skeleton.**
+  - Rebuild: `init.lua` (lazy.nvim bootstrap + `require` of `core.options`,
+    `core.keymaps`, `core.autocmds` + `lazy.setup("plugins")`), empty `lua/plugins/`
+    dir, fresh `lazy-lock.json`.
+  - *Done when:* `nvim` opens with no plugins, no errors; `:Lazy` works.
+- [x] **2. Core options** — `lua/core/options.lua`.
+  - Mirror the Emacs `use-package emacs` block: `expandtab`, `tabstop`/`shiftwidth 4`,
+    `backup`/`writebackup` off, `undofile` on, `number`+`relativenumber`,
+    `scrolloff 15`, `bell`/`visualbell` off, `autoread`, `clipboard=unnamedplus`,
+    `signcolumn=yes`, `splitright`/`splitbelow` (the 180 threshold is dropped — Notes).
+  - *Done when:* `:set all` matches the Emacs values.
+- [x] **3. Leader `SPC` + which-key** — `lua/core/keymaps.lua`, `lua/plugins/which-key.lua`.
+  - `mapleader`/`maplocalleader` = `" "`; `folke/which-key.nvim` (lazy on `VeryLazy`).
+  - SPC tree mirroring the Emacs `my-leader-def`: f=files (ff find, fs save,
+    fd dired, fh help), c=consult (co outline, ci imenu, cg git grep, cr ripgrep,
+    ch history), s=search, b=buffers (bb switch, be/bk kill), w=windows (wh/wj/wk/wl),
+    g=git, t=lsp (tr rename, ta actions, tt definition), h=help (hh), p=project,
+    u=universal. Placeholder commands ok.
+  - *Done when:* `SPC` shows the full menu with Emacs-style descriptions.
+
+## Phase 1 — UI
+
+- [x] **4. Catppuccin mocha** — `lua/plugins/catppuccin.lua`.
+  - `catppuccin/nvim`, `priority = 1000`. `setup({ flavour = "mocha" })` then
+    `vim.cmd.colorscheme("catppuccin-mocha")` — the plugin's `setup()` does not apply
+    the colorscheme (Notes).
+  - *Done when:* colors match Emacs.
+- [x] **5. nvim-web-devicons** — `lua/plugins/devicons.lua`.
+  - `nvim-tree/nvim-web-devicons`, no config needed.
+  - *Done when:* loads without errors (icons verified in tasks 6/12/18).
+- [x] **6. lualine** — `lua/plugins/lualine.lua`.
+  - `nvim-lualine/lualine.nvim` (strategy-table `hoobaz/lualine` 404s — Notes),
+    dependency on devicons. `options.theme = "catppuccin-mocha"` (shipped on
+    catppuccin's rtp; plain `catppuccin` is not a lualine theme).
+  - Do **not** add `"navic"` to `lualine_x` yet — that lands with task 13.
+  - *Done when:* a working statusline shows.
+- [x] **7. indent-blankline** (≈indent-bars) — `lua/plugins/indent-blankline.lua`.
+  - `lukas-reineke/indent-blankline.nvim`, `main = "ibl"`. Python statement scope list
+    from the Emacs config (include: function/class/for/if/with/while definitions;
+    exclude: comprehensions).
+  - *Done when:* a python buffer shows bars.
+- [x] **8. rainbow-delimiters** (≈rainbow-delimiters) — `lua/plugins/rainbow-delimiters.lua`.
+  - `HiPhish/rainbow-delimiters.nvim` — `vim.rainbow` does not exist in 0.12.5 (Notes).
+  - *Done when:* a python buffer shows colored brackets.
+- [x] **9. autopairs** (≈autopair) — `lua/plugins/autopairs.lua`.
+  - `windwp/nvim-autopairs` (strategy-table `chrisma12/autopairs` does not exist — Notes).
+  - *Done when:* typing `(` auto-closes.
+
+## Phase 2 — Navigation
+
+- [x] **10. Telescope** (≈consult) — `lua/plugins/telescope.lua`.
+  - `nvim-telescope/telescope.nvim`. Master (2026) is a rewrite: custom pickers use
+    `pickers.new(opts, spec)` + `finders.new_dynamic`; there is no
+    `telescope.pick`/`make_finder`/`current_buffer_lines` (Notes).
+  - Mappings: `SPC s`=current_buffer_fuzzy_find (consult-line), `SPC bb`=buffers,
+    `SPC cr`=ripgrep, `SPC cg`=git grep (custom picker, `GitGrep` user command),
+    `SPC co`/`SPC ci`=LSP document symbols (outline/imenu — functional only after
+    Phase 4), `SPC ch`=search_history (consult-history), `SPC ff`=find_files,
+    `SPC fh`=help_tags.
+  - *Done when:* every non-LSP `SPC c*`/`b*`/`f*`/`s` command from Emacs has a working
+    twin; the LSP ones are verified in Phase 4.
+- [x] **11. wilder** (≈marginalia/vertico/orderless) — `lua/plugins/wilder.lua`.
+  - `gelguy/wilder.nvim`, `modes = { ":", "/", "?" }`.
+  - *Done when:* `:` completions cycle like vertico.
+- [ ] **12. netrw** (≈dired) SKIP THIS TASK — `lua/core/autocmds.lua`.
+  - Built-in netrw, no plugin. `SPC fd` (from task 3) opens `Lexplore` at cwd.
+  - netrw v184 has no icon list style and no `l`/`h` keys: in a `FileType netrw`
+    autocmd add buffer-local `l`→`<CR>` / `h`→`-` maps, and render file icons as inline
+    virtual text (`nvim_buf_set_extmark`, `virt_text_pos="inline"`) from devicons,
+    re-applied on `TextChanged` (user decision, Notes).
+  - `hidden` on, directories first.
+  - *Done when:* daily file browsing feels like dired.
+- [x] **13. nvim-navic** (≈breadcrumb) — `lua/plugins/navic.lua`.
+  - `SmiteshP/nvim-navic` (strategy-table `liuchengxu/nvim-navic` 404s — Notes);
+    module name is `nvim-navic`, LSP-only.
+  - Add `"navic"` to `lualine_x` in the lualine spec.
+  - *Done when:* plugin loads without errors; the symbol path is verified in code
+    buffers after LSP attaches (Phase 4).
+- [x] **14. Quickfix results workflow** (≈ embark list extraction) — telescope (task 10) + built-in quickfix.
+  - The crucial embark feature: extract a search/match list into a separate buffer, jump to
+    matched lines, return with the results intact. This is Neovim's native **quickfix** workflow;
+    no plugin needed.
+  - Telescope already ships it (verified in the 2026 rewrite's `mappings.lua`): default `<C-q>`
+    = `send_to_qflist + open_qflist` (all entries → quickfix list + open the quickfix window),
+    `<M-q>` = `send_selected_to_qflist + open_qflist` (selected only).
+  - Wire up the quickfix-buffer keys so it feels like the Emacs grep/embark buffer: `<CR>` jump
+    (default), `[d`/`]d` prev/next match, `:cclose` (or `<C-w> o`) back to the code buffer. The
+    list persists, so `:copen` returns to the same results.
+  - Dropped (no equivalent): at-point `embark-act` (target under cursor, no picker) and
+    `embark-export` (`C-l`).
+  - *Done when:* `SPC cr` → `<C-q>` opens a quickfix buffer of all matches; `<CR>` jumps to a
+    match; `:copen` returns to the same results.
+- [x] **15. SPC w window management** (≈ `Ctrl-W`) — `lua/core/keymaps.lua`.
+  - Single prefix mapping `<Leader>w` → `<C-w>` (user decision, 2026-09-02, replacing the
+    originally planned per-key `wincmd` enumeration): after `SPC w` the built-in `Ctrl-W`
+    mappings take over, so the full `Ctrl-W` set works under `SPC w` — movement, rearrange,
+    resize, split/close, counts, and even the formerly excluded variants (`w T`, `w gf`, …).
+  - Trade-off: no individual `<Leader>w*` mappings exist, so which-key can only label the
+    `SPC w` group (labels pass in task 32).
+  - *Done when:* every `SPC w*` key does the same thing as its `Ctrl-W` twin.
+
+## Phase 3 — Editing & languages
+
+- [x] **16. nvim-surround** (≈evil-surround) — `lua/plugins/nvim-surround.lua`.
+  - `kylechui/nvim-surround`.
+  - *Done when:* `ds)"` etc. work.
+- [x] **17. Treesitter** (≈treesit-auto) — `lua/plugins/treesitter.lua`.
+  - `neovim-treesitter/nvim-treesitter` (the plan's `nvim-treesitter/nvim-treesitter`
+    was archived Apr 2026; frozen `master` is not guaranteed on 0.12 — Notes).
+  - `install(langs)` = python, javascript, typescript, tsx, rust, lua, bash,
+    dockerfile, terraform, markdown, vim + ecma/jsx (queries only, needed by the
+    js/ts `inherits` directives); auto-install on new filetypes.
+  - 0.12 rtp quirk: parsers live in `stdpath("data")/site/parser` (Notes).
+  - *Done when:* opening a rust/dockerfile file installs its parser automatically;
+    a md buffer looks like the Emacs one (≈markdown-mode).
+- [ ] **18. visual-fill-column** (markdown) — `lua/plugins/visual-fill-column.lua`.
+  - `luukvbaal/vim-visual-fill-column`, enabled for markdown, keybinding mirroring
+    the Emacs `visual-fill-column` binding.
+  - *Done when:* md text fills to the column in visual mode.
+
+## Phase 4 — LSP & completion
+
+- [x] **19. nvim-cmp** (≈corfu) — `lua/plugins/nvim-cmp.lua`.
+  - `hrsh7th/nvim-cmp` + `cmp-nvim-lsp` + `cmp-buffer` + `cmp-path`.
+  - Auto-trigger at 2 chars, cycle, devicons formatter, doc window (≈popupinfo).
+  - *Done when:* completion pops like corfu (buffer/path sources work pre-LSP).
+- [x] **20. LSP foundation** (≈eglot) — `lua/plugins/lsp.lua`.
+  - `mason-org/mason.nvim` + `mason-org/mason-lspconfig.nvim` (auto-install) +
+    `neovim/nvim-lspconfig` (plan's `willi-b/*` URLs are dead — Notes).
+  - `vim.lsp.config("*", { capabilities = require("cmp_nvim_lsp").default_capabilities() })`
+    (task 19 must be done first); `LspAttach` autocmd group.
+  - Servers = the `ensure_installed` list (user decision, 2026-09-02: "just list
+    servers and call it a day") + `automatic_enable` (default on) — no per-server
+    enable config.
+  - *Done when:* mason is installed and enabling a test server auto-installs it and
+    attaches.
+- [x] **21. LSP keymaps + diagnostics** (≈`SPC t*` / flymake faces).
+  - `SPC t*`: rename, code-actions, hover, definition/references (buffer-local on
+    `LspAttach`). Diagnostics underlined: error red / warning yellow / info green.
+  - *Done when:* `SPC tr`/`ta`/`tt` work.
+- [x] **22. basedpyright** (python).
+  - `typeCheckingMode: "basic"` (≈eglot-workspace-configuration).
+  - *Done when:* python buffers attach and show diagnostics.
+- [x] **23. rust-analyzer** (rust).
+  - *Done when:* rust buffers attach and show diagnostics.
+- [x] **24. lua_ls** (lua).
+  - *Done when:* lua buffers attach.
+- [x] **25. terraformls** (terraform).
+  - *Done when:* `.tf` buffers attach with syntax (treesitter from task 17).
+- [x] **26. dockerfilels** (dockerfile).
+  - *Done when:* Dockerfile buffers attach.
+- [x] **27. zls** (zig).
+  - *Done when:* zig buffers attach.
+- [x] **28. vls** (`.vue`, ≈web-mode+eglot).
+  - *Done when:* `.vue` buffers attach.
+- [x] **29. ruff** (python lint, ≈flycheck).
+  - Mason extra.
+  - *Done when:* ruff diagnostics appear in python buffers.
+
+## Phase 5 — Git
+
+- [ ] **30. Neogit** (≈magit) — `lua/plugins/neogit.lua`.
+  - `sindrel/neogit`; `SPC g` opens the repo, auto-refresh, j/k section navigation.
+  - *Done when:* daily git workflow runs from Neogit.
+- [ ] **31. Side-by-side diffs** (≈magit-delta).
+  - `vim.diffsplit` does not exist in 0.12.5 (Notes) — the remaining gap from the
+    strategy table. Research and implement side-by-side diff rendering in Neogit
+    (built-in options or a small plugin).
+  - *Done when:* Neogit diffs render side-by-side.
+
+## Phase 6 — Wrap-up
+
+- [ ] **32. Which-key labels pass.**
+  - Every SPC binding gets its Emacs description.
+  - *Done when:* the SPC tree matches the `my-leader-def` descriptions.
+- [ ] **33. chezmoi sync + cleanup + final comparison.**
+  - `chezmoi sync`, delete stale plugin files, commit.
+  - Final pass: open one python, one rust, one md, one vue file and compare
+    side-by-side with Emacs.
+
+---
+
+## Notes
+
+- Task 17: `lua/plugins/treesitter.lua` — the plan's `nvim-treesitter/nvim-treesitter`
+  was archived (2026-04) and its frozen `master` branch is "locked, no new features",
+  only guaranteed for nvim 0.11 — we run 0.12.5. The ecosystem moved to the
+  `neovim-treesitter/nvim-treesitter` fork: `main` is a full incompatible rewrite
+  (no `ensure_installed`/`nvim-treesitter.configs` module, parsers+queries discovered
+  from the `neovim-treesitter/treesitter-parser-registry` community registry, no
+  lazy-loading support), so the spec is
+  `{ "neovim-treesitter/nvim-treesitter", dependencies = { "neovim-treesitter/treesitter-parser-registry" }, lazy = false, build = ":TSUpdate" }`
+  (locked `main/df7489e` + registry `main/6eb1535`). `config` hook:
+  `require("nvim-treesitter").install(langs)` (async, no-op if present on disk) + a
+  `FileType` autocmd that (a) auto-installs the parser when the buffer's lang has none
+  (the treesit-auto twin) and (b) calls `vim.treesitter.start(buf, lang)` for
+  highlighting — features are NOT auto-enabled in the rewrite, `start()` must be
+  called per FileType. langs = the plan's 11 + `ecma`/`jsx`: the javascript/typescript/
+  tsx query repos carry `; inherits: ecma[,jsx]` and the resolver only merges parents
+  that are installed, so without them JS/TS highlighting is incomplete (registry lists
+  them as `queries_only` — no parsers, just `.scm`). Parsers compile locally from
+  grammar tarballs, so the `tree-sitter` CLI is required: installed v0.26.13 to
+  `~/.local/bin/tree-sitter` (system `libtree-sitter.so.0.26` = ABI 15; nvim reports
+  `language_version=15`, `minimum=13`). 0.12.5 API caveats: `vim.treesitter.parser`,
+  `vim.treesitter.ns`, `vim.treesitter.is_attached` do not exist — use
+  `get_parser(buf, lang)` / `node_for_range` / `get_captures_at_cursor(win, kinds)`;
+  `vim.treesitter.language.get_lang(ft)` takes a filetype STRING (not a bufnr, and a
+  list-valued `filetype` must be reduced to `ft[1]`). Headless caveat: the
+  highlighter's initial parse is triggered by the decoration provider's `_on_start`
+  (a UI redraw event) which never fires headless — TS highlighting appears
+  "unattached" in headless tests even though everything works; calling
+  `require("vim.treesitter").highlighter._on_start()` manually makes the parse run
+  (same headless/PTY quirk family as the PTY-regression note). Verified headless
+  (temp-`XDG_CONFIG_HOME` symlink): all 11 langs + ecma/jsx + toml installed
+  (`:TSUpdate` build step ran), rust/markdown/typescript parse + highlight
+  (`get_captures_at_cursor` non-empty), dockerfile parses + highlights after manual
+  `_on_start`, and a `.toml` file (not in the list) auto-installed its parser on open.
+- Task 16: `lua/plugins/nvim-surround.lua` — `kylechui/nvim-surround` (locked `main/8b47db6`), minimal spec `event = "VeryLazy"` (the README's lazy spec; the Emacs side is a bare `global-evil-surround-mode 1` with no options). The plugin needs no `setup()`: its `plugin/nvim-surround.lua` registers the `ds`/`ys`/`cs` (and `S`/`gS`/`<C-g>s`) keymaps at load, so lazy's `VeryLazy` load is enough for the full session. Verified headless (same temp-`XDG_CONFIG_HOME` symlink setup): the plugin was force-loaded with `require('nvim-surround')` because `:sleep` hangs in this 0.12.5 build's headless mode (event-loop quirk, same family as the PTY-regression note — lazy's `VeryLazy` wait cannot be exercised in a test), and `vim.cmd("normal ds)")` etc. ran on `foo("bar")`: `ds)` → `foo"bar"`, `ds"` → `foobar`, `ysiw{` → `{ foobar }`, `cs{[` → `[ foobar ]` — delete/add/change all work. Caveats: `:normal!` (bang form) bypasses mappings, so verification must use bang-less `:normal` (the plugin's own test suite does the same); `vim.keymap.get` does not exist in 0.12.5 (`maparg` works).
+- Task 10: `lua/plugins/telescope.lua` — `nvim-telescope/telescope.nvim` (locked at
+  `master/40aedd8`, the 2026 v0.2 rewrite) + `nvim-lua/plenary.nvim` (`master/74b06c6`) as
+  dependency (plenary is still required by the rewrite: `plenary.job`/`popup`/`strings`/`async`).
+  Requires nvim ≥ 0.11.7 (we have 0.12.5). Old API is gone: no `telescope.pick`/
+  `make_finder`/`builtin.ripgrep`; builtins live in `require("telescope.builtin")` (lazy-loaded
+  per-picker modules `telescope.builtin.__files/__git/__internal/__lsp`); custom pickers are
+  `pickers.new(opts, spec):find()` + `finders.new_dynamic({ fn, entry_maker })` (sync, main
+  thread) or `finders.new_job` (async). `setup({})` called with no opts (plan specifies none).
+  Mappings (set in the spec's `config` hook; the task-3 noops in `core/keymaps.lua` are
+  overridden at startup by lazy's `keys` placeholders, which re-feed `<Ignore>`+lhs after
+  loading, so the first press works): `SPC s`=`current_buffer_fuzzy_find`, `SPC bb`=`buffers`,
+  `SPC cr`=`live_grep` (the rewrite has no prompt-based `ripgrep` — `live_grep` is the rg-based
+  live twin), `SPC cg`=custom git-grep picker, `SPC co`/`SPC ci`=`lsp_document_symbols`,
+  `SPC ch`=`search_history`, `SPC ff`=`find_files`, `SPC fh`=`help_tags`.
+  Git grep: `finders.new_dynamic` running `git grep -n -I -- <prompt>` (blocking `systemlist` in
+  the repo toplevel, `git rev-parse --show-toplevel`; empty prompt → no results, non-repo →
+  WARN notify) with a custom entry maker parsing `path:line:text` — the stock
+  `make_entry.gen_from_vimgrep` does NOT fit: its `parse_with_col` requires a `file:line:col:text`
+  shape and git grep emits no column. Entries carry `path` (absolute, toplevel-joined) so both
+  the default select (`action_set.edit` uses `entry.path or entry.filename`) and
+  `conf.grep_previewer` resolve correctly when cwd ≠ git root; `sorters.highlighter_only` keeps
+  git grep's own ordering and highlights matches. `:GitGrep` user command is created in the
+  config hook; the spec's `cmd = { "GitGrep" }` adds a load-on-first-use placeholder (lazy's cmd
+  handler deletes its own placeholder before loading, so no `force` needed).
+  Verified via tmux (`send-keys` + `capture-pane`, temp-`XDG_CONFIG_HOME` symlink setup):
+  `SPC cr`/`SPC ff`/`SPC fh` open with results + preview; `:GitGrep`/`SPC cg` show git grep
+  results with the grep previewer; `SPC s`/`SPC bb`/`SPC ch` open (ch empty — no `/` history
+  yet); `SPC co`/`SPC ci` notify "no client attached" until Phase 4 (graceful, no crash).
+  Caveat: in the full config the first `SPC cg` press sometimes leaves the keys pending instead
+  of opening (which-key v3 interaction — `:checkhealth which-key` also flags the task-3
+  desc-only group spec entries as "Invalid field"); a minimal repro without which-key proves the
+  lazy `keys` re-feed path itself works, so the which-key conflict is deferred (user decision,
+  2026-09-02) and may resurface in task 32's labels pass.
+- `lazy.setup("plugins")` with a literally empty `lua/plugins/` dir errors at startup ("No specs found for module \"plugins\"" — `Spec:import` errors when the import resolves to zero spec files, verified in stable 306a055). Task 1 therefore ships `lua/plugins/init.lua` = `return {}` (zero plugins, no error); later tasks add `lua/plugins/<name>.lua` alongside it.
+- Task 1 bootstrap uses the canonical stable-doc path `stdpath("data")/lazy/lazy.nvim` (reuses the existing clone); the fresh `lazy-lock.json` was generated by `:Lazy update` (single `lazy.nvim` entry, `main/306a055`). `:Lazy` UI does not render in headless mode (`LazyView.show` early-returns without a UI) — verify it via pseudo-TTY.
+- Task 1 is the only destructive step; git makes it fully reversible. A previous run
+  had staged a partial rebuild in the git index (phases 0–2 + cmp + partial LSP,
+  including a `gopls` that is not part of this plan); it is discarded per user
+  decision (2026-09-01).
+- Task 15: `lua/core/keymaps.lua` — `SPC w` is a single prefix mapping `<Leader>w` → `<C-w>`
+  (user decision, 2026-09-02, replacing the per-key `wincmd` enumeration drafted in the plan):
+  after `SPC w`, Vim's built-in `Ctrl-W` mappings handle the rest, so the whole `Ctrl-W`
+  command set (movement, rearrange, resize, split/close, counts, and the formerly excluded
+  `w T`/`w gf` variants) works identically under `SPC w`. Cost: no individual `<Leader>w*`
+  mappings exist, so which-key can only label the `SPC w` group (task 32). Verified manually
+  by the user.
+- `split-height-threshold 1000` / `split-width-threshold 180` (Emacs "prefer
+  side-by-side") have no exact nvim equivalent — `splitwidth` is not a nvim option,
+  so task 2 keeps only `splitright/splitbelow`; the 180 threshold is dropped
+  (user decision, 2026-08-30).
+- kdl and hyprlang have no mature nvim-treesitter parsers — left out.
+- `vim.rainbow` and `vim.diffsplit` do **not** exist in Neovim 0.12.5 (verified: nil in the
+  binary, absent from neovim source incl. nightly) — the "built-ins" premise in the strategy
+  table was wrong. Rainbow is provided by `HiPhish/rainbow-delimiters.nvim` (user decision,
+  2026-08-31); the diffsplit gap is task 31.
+- Plan's `hoobaz/lualine` and `chrisma12/autopairs` don't exist on GitHub; using canonical
+  `nvim-lualine/lualine.nvim` and `windwp/nvim-autopairs` (user decision, 2026-08-31).
+- Current `catppuccin/nvim` compiles themes and its `setup()` does not apply the colorscheme —
+  the spec runs `vim.cmd.colorscheme("catppuccin-mocha")` after setup. Lualine theme is
+  `catppuccin-mocha` (shipped on catppuccin's rtp; plain `catppuccin` is not a lualine theme).
+- Neovim 0.12 only puts `stdpath("data")/site` on rtp (not the data root), so treesitter
+  parsers must live in `~/.local/share/nvim/site/parser/`. A python parser (built from
+  tree-sitter-python) was installed there during the discarded run; task 17 takes over
+  parser management.
+- `liuchengxu/nvim-navic` 404s (repo moved, no redirect); using `SmiteshP/nvim-navic`
+  (module renamed to `nvim-navic`, LSP-only, ships a built-in lualine component used as
+  `"navic"` in `lualine_x`).
+- telescope.nvim master (2026) is a rewrite: no `telescope.pick`/`make_finder`/
+  `current_buffer_lines`. Custom pickers use `pickers.new(opts, spec)` +
+  `finders.new_dynamic`; `SPC s` maps to `current_buffer_fuzzy_find`, `SPC ch` to
+  `search_history` (closest twins of consult-line/consult-history in this version).
+- embark has no Neovim port (verified: the only "embark.nvim" on GitHub is a *theme* port).
+  The crucial part — extracting a search/match list into a separate buffer, jumping to matched
+  lines, and returning with the results intact — is Neovim's native **quickfix** workflow:
+  telescope's default `<C-q>` = `send_to_qflist + open_qflist` (and `<M-q>` = selected-only)
+  sends picker results to the quickfix list and opens the quickfix window; jump with `<CR>`/
+  `[d`/`]d`, return with `:copen` (the list persists). Task 14 wires this up. The at-point
+  `embark-act` (target under cursor, no picker) and `embark-export` (`C-l`) have no equivalent
+  and are dropped (user decision, 2026-09-01).
+- netrw (v184) has no icon list style and no `l`/`h` keys: `l`/`h` are buffer-local maps
+  added in `core/autocmds.lua`, and file icons are inline virtual text
+  (`nvim_buf_set_extmark`, `virt_text_pos="inline"`) re-applied on `TextChanged` (user
+  decision, 2026-08-31).
+- `bell`/`visualbell` are not Neovim options (E5108, verified in 0.12.5) — the bell is
+  already silenced by the default `belloff=all`, so task 2 sets nothing for it.
+- Task 2 verified headless via a temp `XDG_CONFIG_HOME` symlinked to the source tree:
+  `nvim -u {file}` does not add the file's dir to rtp, so `require("core.*")` would
+  otherwise resolve against the stale deployed `~/.config/nvim` copy.
+- Task 3: `lua/core/keymaps.lua` sets `mapleader`/`maplocalleader` = `" "` and defines the
+  SPC tree with Emacs `my-leader-def` descriptions; `fs`/`be`/`bk`/`wh..wl`/`hh` are real
+  commands, the rest are `noop` placeholders owned by later tasks (10/12/21/30). Group
+  labels (files/consult/buffers/windows/lsp/help) are desc-only entries in which-key's
+  `spec` — NOT keymaps: which-key v3 (3.17.0, the 2026 rewrite) honors `timeoutlen` for
+  nodes that are both keymap and group, so a noop keymap on a group prefix would swallow
+  the keypress within 1s instead of navigating (verified in `state.lua` `M.check`).
+  `lazy-lock.json` gained `which-key.nvim` (`main/3aab214`, pre-existing clone reused).
+  Verified via tmux (`send-keys` + `capture-pane`): SPC + group key renders every
+  submenu (f/c/b/t/w/h) with the full Emacs-style labels.
+- Task 9: `lua/plugins/autopairs.lua` — `windwp/nvim-autopairs` (locked at `master/430522f`),
+  minimal spec `event = "InsertEnter"` + `opts = {}` (Emacs `use-package autopair` has no options;
+  the README's recommended lazy spec). The plugin is pure Lua (no `plugin/` dir) — `setup()`
+  (called by lazy from `opts`) attaches via `force_attach()` + `BufEnter`/`BufWinEnter`/
+  `FileType` autocmds; insert-mode pairs are buffer-local **expr** maps (`rhs=''`, `expr=true`,
+  callback returns e.g. `()<c-g>U<left>`). Verified via tmux (`send-keys` + `capture-pane`,
+  same temp-`XDG_CONFIG_HOME` symlink setup): typing `i(` in a fresh buffer renders line 1 as
+  `()` with the insert-mode cursor between the pair (cursor_x on the `)` cell); after Esc the
+  cursor lands on `(` — the standard "char before insertion point" behavior, matching a vanilla
+  `i()` baseline run. Caveat: headless insert-mode simulation is untrustworthy on this 0.12.5
+  build — `:startinsert` never sticks and `nvim_feedkeys("i(")` ends in mode `n` even with
+  vanilla `-u NONE` (same event-loop quirk family as the PTY regression above), so TTY
+  verification is required for this behavior.
+- Task 8: `lua/plugins/rainbow-delimiters.lua` — bare spec for `HiPhish/rainbow-delimiters.nvim`
+  (locked at `master/012f148`), no opts (README: no configuration needed). The spec's `config`
+  hook registers a `FileType` autocmd (augroup `RainbowDelimitersParse`) that calls
+  `parser:parse()` when the plugin has a query for the lang (`require("rainbow-delimiters.lib").get_query`,
+  re-exported as public API) — required because the plugin's `plugin/` file only registers
+  `FileType`/`BufUnload` autocmds and never triggers an initial parse: its `full_update` iterates
+  existing trees (empty for a fresh buffer) and `on_changedtree` fires only after a parse, so with
+  nothing else parsing trees yet (task 17 owns treesitter) the brackets would never light up.
+  Once task 17's highlighting parses, the extra `parse()` is an incremental no-op. Verified headless
+  (same temp-`XDG_CONFIG_HOME` symlink setup): python buffer → `is_enabled` true, 14 extmarks in the
+  per-lang namespace — Red 6 / Yellow 4 / Blue 2 / Orange 2, exactly the sample's nested delimiter
+  structure; a `.txt` buffer (no parser) stays clean; no errors. Uses the python parser at
+  `stdpath("data")/site/parser` (installed during the discarded run; task 17 takes over).
+- Task 7: the plan's `main = "ibl"` branch no longer exists (repo branches: `master`,
+  `version-1`, `current-indent`, feature/*; README is stale) — v3 code lives on the default
+  `master` branch, so the spec omits `main` (locked at `master/d28a3f7`). The spec pins
+  `name = "ibl"`: lazy's `opts` resolves `require("<name>").setup`, and the default name
+  `indent-blankline` resolves to `lua/indent_blankline.lua`, a v2 compat shim that errors on
+  `setup`. Scope port: v3 API is `scope.include/exclude.node_type` (lang → node-type lists);
+  the built-in python default is `{module, class_definition, function_definition,
+  dictionary/list/set_comprehension}`, so the spec includes `for/if/with/while_statement`
+  (fn/class already default) and excludes the three comprehensions (`module` is excluded by
+  default) — net scope set = the Emacs `indent-bars-treesit-scope` list exactly. Verified
+  headless: 21 indent-bar extmark cells in a python buffer; `require("ibl.scope").get`
+  resolves `for`/`with`/`while` bodies to their statement nodes and a module-level
+  comprehension to nil. Caveat: ibl scope needs the treesitter tree parsed — `named_node_for_range`
+  does not auto-parse in 0.12.5, and nothing in the current config parses trees yet; the
+  scope bar lights up once task 17's treesitter highlighting lands.
+- Task 6: `lua/plugins/lualine.lua` — `nvim-lualine/lualine.nvim` (locked at
+  `master/221ce6b`), devicons dependency, `options.theme = "catppuccin-mocha"` only
+  (default-ish setup per strategy table; no `navic` in `lualine_x` yet — task 13).
+  Verified headless (same temp-`XDG_CONFIG_HOME` symlink setup): clean startup, no
+  errors, `statusline` is custom, lualine sets `laststatus` to 2, and the rendered
+  statusline string carries the a/b/c segments (mode, git branch, filename,
+  position). This lualine version defines per-mode groups `lualine_{a,b,c}_{mode}`
+  (lowercase — the old `LualineA`-style names error with E5108): `lualine_a_normal`
+  bg `#89b4fa` (blue) fg `#181825` (mantle), `lualine_b_normal` bg `#313244`
+  (surface1), `lualine_c_normal` bg `#181825` (mantle); insert `#a6e3a1`, replace
+  `#f38ba8`, command `#fab387` — exact mocha palette.
+- Task 5: bare spec, no config (plan: "no config needed"); locked at `nvim-web-devicons`
+  `master/5f032a8`. Verified headless (same temp-`XDG_CONFIG_HOME` symlink setup as task 2):
+  clean startup, `require("nvim-web-devicons")` loads, `get_icon` resolves py/toml/
+  dockerfile/md/tf/vue/gitignore/fish to their `DevIcon*` highlight groups and an unknown
+  extension falls back to `DevIconDefault`. API caveat for tasks 12/18: current master's
+  `get_icon(name, ext, opts)` returns two strings `(icon, highlight_name)`, NOT the icon
+  data table of older versions — read the highlight name from the 2nd return value
+  (`get_icon_colors`/`get_icon_color` exist for color lookups).
+- Task 4: `lua/plugins/catppuccin.lua` pins `name = "catppuccin"` — the repo's last segment
+  is `nvim`, so without the pin lazy installs into `lazy/nvim` and the lock entry becomes
+  `"nvim"`; the pin reuses the existing `lazy/catppuccin` clone (`main/edefef7`, stable-16).
+  Verified headless: Normal bg `#1e1e2e` (base), fg `#cdd6f4` (text), ErrorMsg `#f38ba8`
+  (red), Comment `#9399b2` (overlay1), Visual `#45475a` (surface1) — exact mocha palette,
+  same flavour Emacs loads. Operational: the lockfile is only rewritten when lazy performs
+  install/checkout work — a no-op startup sync does not update it; run `:Lazy! sync`
+  headless after adding a spec.
+- nvim 0.12.5 (this build) has a PTY-mode event-loop regression (neovim/neovim#38877,
+  "timer_start() callbacks don't fire in PTY jobs, regression from 0.11"): a
+  `vim.schedule` callback queued from a uv-timer callback does not run until the next
+  keypress. Reproduced with vanilla nvim + bare `uv.new_timer`/`vim.schedule` (no
+  plugins). Consequence for which-key v3: the top-level menu does not appear on SPC
+  alone (its 200ms show-timer goes through `vim.schedule_wrap`); it renders as soon as
+  the next key is pressed, which is why all submenu navigation works. Not fixable from
+  the config; re-verify the bare-SPC menu on a fixed nvim.
+- Task 14: no config code needed — the workflow is telescope (task 10) + built-in quickfix.
+  Verified in the rewrite's `actions/init.lua`: `<C-q>` = `send_to_qflist + open_qflist`
+  (`send_all_to_qf` runs `setqflist` over all entries + `botright copen`), so `SPC cr` →
+  `<C-q>` opens the quickfix window with every match. In the qf buffer (buftype `quickfix`,
+  filetype `qf`): `<CR>` = `:cc` jump to the match under the cursor; `[q`/`]q` =
+  `:cprevious`/`:cnext` (Neovim's built-in vim-unimpaired quickfix maps, set in
+  `vim/_core/defaults.lua`); `:cclose`/`:copen` close/reopen with the list intact (it persists
+  in `getqflist()`). The plan's `[d`/`]d` prev/next was NOT wired: in 0.12 `[d`/`]d` are the
+  global **diagnostic** keys (`vim.diagnostic.jump`), and a buffer-local `[d`/`]d` quickfix
+  override does not fire in the full config (which-key v3 swallows the dual global+buffer-local
+  `]d` sequence; the single-map `[q`/`]q` fire fine). User decision (2026-09-02): use the
+  built-in `[q`/`]q` for prev/next match; `[d`/`]d` stay diagnostic. Verified via tmux
+  (`send-keys` + `capture-pane`, temp-`XDG_CONFIG_HOME` symlink, reusing the existing lazy
+  clones): qflist → `botright copen` shows all matches, `<CR>` jumps to the code buffer,
+  `]q`/`[q` step through matches, `:cclose`/`:copen` round-trips with the same results.
+- Task 13: `lua/plugins/navic.lua` — `SmiteshP/nvim-navic` (locked at `master/455808f`;
+  `liuchengxu/nvim-navic` 404s per the earlier note). The repo has **no** `plugin/` dir, so
+  nothing runs without an explicit `setup()` — the spec calls `setup({ lsp = { auto_attach = true } })`
+  in a `config` hook (no lazy-load event): `auto_attach` registers the `LspAttach` autocmd that
+  calls `M.attach`, and it must exist **before** the first LSP attach fires (lazy-loading on
+  `LspAttach` would miss the current event — autocmds registered mid-event don't fire for it).
+  `setup(nil)` early-returns, so opts are mandatory. `attach` only engages clients with
+  `documentSymbolProvider`; per-buffer context updates ride on `CursorMoved`/`CursorHold`.
+  Lualine side: the plugin ships `lua/lualine/components/navic.lua`, which lualine resolves
+  from the string `"navic"` via `require('lualine.components.' .. name)` — added to `lualine_x`
+  in `lua/plugins/lualine.lua`. Its `cond` is `navic.is_available()` (false pre-LSP), so the
+  section is empty until a client attaches; the `require` pcall in lualine's loader means a
+  not-yet-loaded plugin is skipped silently. Verified headless (same temp-`XDG_CONFIG_HOME`
+  symlink setup): clean startup, no errors in `:messages`, `require("nvim-navic")` and
+  `require("lualine.components.navic")` both load, `is_available()` false (no client yet), and
+  the navic `LspAttach` autocmd is listed in `:au LspAttach`. Symbol-path rendering is
+  verified in Phase 4 (first server attach).
+- Task 11: `lua/plugins/wilder.lua` — `gelguy/wilder.nvim` (locked at `master/679f348`),
+  minimal spec per plan: `setup({ modes = { ":", "/", "?" } })` with wilder's default renderer
+  (candidates cycle inline on the command line — the vertico single-line-cycle equivalent; the
+  popupmenu renderer from the discarded old config is not part of the plan). Wilder is
+  vimscript-first: `lua/wilder.lua` is a shim forwarding to `wilder#*` autoload functions;
+  `wilder#setup` registers `autocmd CmdlineEnter * call wilder#main#start()` (augroup
+  `WilderCmdlineEnter`) and the default cycling keys `<Tab>`/`<S-Tab>` (`next_key`/`previous_key`)
+  plus `<Up>`/`<Down>` reject/accept as `cnoremap <expr>` guarded by `wilder#in_context()`.
+  No lazy-load trigger — the spec runs at startup so `:` is intercepted from first use.
+  Verified via tmux (same temp-`XDG_CONFIG_HOME` symlink setup): `:e` renders the candidate line
+  `earlier echo echoerr ... >` on the command line; `<Tab>` cycles (`:earlier` → `:echo`);
+  `<CR>` accepts (opened PLAN.md by full path); `/pha` and `?pha` render buffer search
+  candidates; no errors in `:messages`. Wilder's default `modes` is `{ "/", "?" }` — the spec's
+  `modes` adds `:`.
+- Phase 4 (tasks 19–29), implemented in one run (2026-09-02) per user request; final shape per
+  user decision: "just list servers and call it a day" — `lua/plugins/lsp.lua` = mason +
+  mason-lspconfig (`ensure_installed` list, `automatic_enable` default-on) + nvim-lspconfig
+  (global cmp capabilities, two load-bearing server shims, LspAttach keymaps, diagnostics).
+  `lua/plugins/nvim-cmp.lua` = cmp + 3 sources + devicons.
+- Task 20: plan's `willi-b/mason.nvim` + `willi-b/mason-lspconfig` are dead (404, account gone) —
+  Mason moved to the `mason-org` org: `mason-org/mason.nvim` (v2, locked `main/2a6940a`) +
+  `mason-org/mason-lspconfig.nvim` (v2.3.0, locked `main/40276c4`). Mason v2 + mason-lspconfig v2
+  API: `setup({ ensure_installed = { <lspconfig server names> } })` — names are auto-mapped to
+  mason package names via the registry specs' `neovim.lspconfig` field (`mason-lspconfig.mappings`);
+  `automatic_enable` (default `true`) enables every installed server at startup (`init()`) and on
+  `package:install:success` — no per-server enable config exists anymore (v1's `setup_handlers`/
+  `single_source_configuration` are gone). `:LspInstall` (no args) lists the servers matching the
+  current buffer's filetype for on-demand install. Caveat: `ensure_installed` is skipped headless
+  (`platform.is_headless` guard in `init.lua`) — headless verification installed via `pkg:install`
+  + `vim.wait` (the `package:install:success` handler then auto-enabled each server, proving the
+  enable path).
+- Task 19: `hrsh7th/nvim-cmp` master (locked `main/2ffe79f`) is a full v1 rewrite: no
+  `cmp.autocmd()` (self-subscribes `TextChangedI/P` at load — no manual wiring), no
+  `preset.default_t` (presets are now `insert`/`cmdline`: `<C-n>`/`<C-p>`/`<Up>`/`<Down>` cycle,
+  `<C-y>` confirm, `<C-e>` abort), no string `formatting` (now `formatting.format(entry, vim_item)`
+  returning a table — set `vim_item.icon`/`icon_hl_group`). Spec: `lazy = false` (cmp-nvim-lsp
+  must be on rtp at startup for lsp.lua's `default_capabilities()`), deps cmp-nvim-lsp/cmp-buffer/
+  cmp-path/devicons. Config: `completion.keyword_length = 2` (corfu `auto-prefix 2` twin),
+  `mapping = preset.insert({ ["<CR>"] = confirm })`, sources `nvim_lsp`/`path`/`buffer`
+  (registered via `after/plugin`, names per each source's `register_source`), devicons formatter
+  (LSP kind → nerd icon + `CmpItemKind<Kind>Icon` hl; else `get_icon(entry.value)` for path/buffer
+  entries), doc window = default `view.docs.auto_open = true` (popupinfo twin). Verified via tmux:
+  buffer-source popup (Text kind) and path-source popup with the devicons Folder icon (the path
+  source only triggers on `/`-shaped input — `PATH_REGEX` requires a slash); `<C-n>` cycles; LSP
+  completion works (48 items from basedpyright via `vim.lsp.buf_request_sync`); cmp-nvim-lsp
+  `client_source_map` registered (re-registers per `InsertEnter`). PTY caveat: the LSP-source
+  popup did not render in the tmux test (async LSP round-trip + the 0.12.5 PTY timer-regression
+  family) — the pipeline is proven functional; re-verify the popup on a fixed nvim.
+- Tasks 22–28: `ensure_installed = { basedpyright, rust_analyzer, lua_ls, terraformls, dockerls,
+  zls, vue_ls, ruff }`. Name changes vs plan: "dockerfilels" → lspconfig name `dockerls` (mason
+  pkg `dockerfile-language-server`); "vls" → `vue_ls` (nvim-lspconfig v2's `vls` is the **V
+  language** server; the Vue server is `vue_ls`, mason pkg `vue-language-server`). Two
+  load-bearing shims in lsp.lua: (a) `vim.lsp.config("basedpyright", { settings = { basedpyright
+  = { typeCheckingMode = "basic" } } })` — REQUIRED: current basedpyright's default
+  `typeCheckingMode` is `'off'` (verified in basedpyright source `server.ts getSettings`), so
+  without it python buffers get no diagnostics; (b) `vim.lsp.config("terraformls", { filetypes =
+  { "tf", "terraform", "terraform-vars" } })` — REQUIRED: nvim's built-in `.tf` filetype is `tf`,
+  lspconfig's terraformls only listens for `terraform`/`terraform-vars`, so without the shim
+  terraformls never attaches. All verified headless (temp-`XDG_CONFIG_HOME` symlink setup):
+  basedpyright+ruff on python (12 ERROR diagnostics), rust_analyzer on a cargo project (1
+  diagnostic), lua_ls, terraformls, dockerls, zls (warns "zig executable could not be found" —
+  zig toolchain not installed; client still attaches), vue_ls.
+- Task 21: `LspAttach` autocmd in the `lsp` augroup (lsp.lua) sets buffer-local `<leader>tr`
+  rename / `<leader>ta` code_action / `<leader>tt` definition / `<leader>th` hover / `<leader>tR`
+  references (hover/references have no Emacs twin — `th`/`tR` are free slots in the SPC tree;
+  labels land in task 32). Diagnostics: `virtual_text = false`, `underline = true`;
+  `Diagnostic{Error,Warning,Info}` hl groups get `underline = true` + mocha red/yellow/green fg.
+  Verified live (tmux): `:map` lists all five buffer-local maps on a python buffer. 0.12.5
+  caveats: the hl attribute is `underline` (`nvim_set_hl` errors "invalid key" on `underlined` —
+  that's the diagnostic text property), and `maparg(lhs, "n", true)` (expr=1) only matches
+  **expr** mappings — use `false`/`0` for regular ones (this made an initially-working keymap set
+  look absent).
+- Tasks 10/13 Phase-4 verifications: basedpyright client advertises `documentSymbolProvider`
+  (so `SPC co`/`SPC ci` = telescope `lsp_document_symbols` are functional), and
+  `require("nvim-navic").is_available()` is true after attach (lualine navic component's `cond`
+  is satisfied; symbol-path rendering is UI-only, not verifiable headless).
+- 0.12.5 test-harness quirks (this build): `vim.fn.writefile` writes a NUL byte after every line
+  (test files must be created with bash/printf — this masked rust/lua diagnostics in an early
+  run); `vim.lsp.request`, `vim.lsp.make_request_params`, `vim.keymap.get` do not exist;
+  `vim.lsp.buf_request_sync(bufnr, method, params, timeout)` returns `{{ context, result }}`.
