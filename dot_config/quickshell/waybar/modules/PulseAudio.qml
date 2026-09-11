@@ -49,13 +49,14 @@ ModuleBox {
         PwObjectTracker {
             objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
         }
-        Process {
-            id: pavuProc
-            command: ["sh", "-c", "pavucontrol &"]
-        }
     }
 
-    onClicked: pavuProc.running = true
+    PulseAudioDashboard {
+        id: dashboard
+        anchorItem: root
+    }
+
+    onClicked: dashboard.toggle()
     onWheelUp: nudgeVolume(0.05, isInput(x) ? source : sink)
     onWheelDown: nudgeVolume(-0.05, isInput(x) ? source : sink)
     onMiddleClicked: toggleMuted(isInput(x) ? source : sink)
