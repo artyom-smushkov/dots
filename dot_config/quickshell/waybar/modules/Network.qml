@@ -31,7 +31,7 @@ ModuleBox {
         + (activeDev === null ? "\u{F092E}"
         : (activeDev.type === DeviceType.Wifi ? wifiLabel : wiredLabel))
 
-    visible: loaded
+    visible: loaded || Networking.devices.values.length > 0
 
     onClicked: dashboard.toggle()
 
@@ -119,15 +119,6 @@ ModuleBox {
             onTriggered: {
                 proc.running = true
                 vpnProc.running = true
-            }
-        }
-        Timer {
-            id: loadCheckTimer
-            interval: 1000
-            repeat: true
-            running: !root.loaded
-            onTriggered: {
-                if (Networking.devices.values.length > 0) root.loaded = true
             }
         }
         Timer {
