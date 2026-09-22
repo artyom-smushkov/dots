@@ -16,14 +16,16 @@ sudo pacman -Sy docker podman podman-compose docker-compose docker-buildx \
        libnotify \
        man-db \
        yt-dlp \
-       fish htop btop nvtop eza dust duf procs neovim tmux jq fzf starship fd ripgrep \
-       sddm hyprland hypridle hyprlock brightnessctl \
+       fish htop btop nvtop amdgpu_top eza dust duf procs neovim tmux jq fzf starship fd ripgrep \
+       unzip pacman-contrib zsh-autosuggestions zsh-syntax-highlighting \
+       sddm hyprland hypridle hyprlock brightnessctl blanket hyprshutdown \
        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
-       vivaldi \
+       gradia tesseract-data-ukr tesseract-data-eng \
+       vivaldi transmission-gtk \
        distrobox flatpak \
-       virt-manager dnsmasq vde2 openbsd-netcat \
+       virt-manager dnsmasq vde2 openbsd-netcat qemu-desktop \
        snapper snap-pac \
-       pipewire wireplumber pipewire-pulse helvum \
+       pipewire wireplumber pipewire-pulse helvum pipewire-jack mpd \
        gnome-calculator gnome-calendar gnome-characters gnome-connections gnome-contacts file-roller \
        geary loupe gnome-maps thunar thunar-volman tumbler papers gnome-weather gnome-font-viewer gnome-boxes lollypop \
        telegram-desktop \
@@ -40,7 +42,10 @@ rm -rf paru
 
 paru -S wezterm-nightly-bin
 paru -S anydesk-bin
-paru -S slack-wayland
+paru -S zen-browser-bin pwvucontrol
+paru -S mailspring-bin
+paru -S neuralrack
+paru -S slack-desktop
 paru -S proton-pass-bin
 
 sudo systemctl enable sddm.service
